@@ -5,55 +5,6 @@ HackTheBox Certified Penetration Tester Specialist Cheatsheet
 
 The below is taken from https://github.com/zagnox/CPTS-cheatsheet and will be improved by myself
 
-**Table of Contents**
-- [Tmux](#tmux)
-- [Nmap](#nmap)
-  - [Address Scanning](#nmap-address-scanning)
-  - [Scanning Techniques](#nmap-scanning-techniques)
-  - [Host Discovery](#nmap-host-discovery)
-  - [Port Scan](#nmap-port-scan)
-  - [OS and Service Detection](#nmap-os-and-service-detection)
-  - [Timing and Performance](#nmap-timing-and-performance)
-  - [NSE Scripts](#nse-scripts)
-  - [Evasion and Spoofing](#firewall-evasion-and-spoofing)
-  - [Output](#output)
-- [Footprinting Services](#footprinting-services)
-    - [FTP](#ftp)
-    - [SMB](#smb)
-    - [NFS](#nfs)
-    - [DNS](#dns)
-    - [IMAP POP3](#imap-pop3)
-    - [SNMP](#snmp)
-    - [MSSQL](#mssql)
-    - [IPMI](#ipmi)
-    - [Remote Management](#linux-remote-management-ssh)
-- [Password Attacks](#password-attacks)
-    - [Password Mutations](#password-mutations)
-    - [Remote Password Attacks](#remote-password-attacks)
-    - [Windows Password Attacks](#windows-password-attacks)
-    - [Linux Password Attacks](#linux-password-attacks)
-    - [Cracking Passwords](#cracking-passwords)
-- [Attacking Common Services](#attacking-common-services)
-    - [Attacking SMB](#attacking-smb)
-    - [Attacking SQL](#attacking-sql)
-    - [Attacking Email Services](#attacking-email-services)
-- [Active Directory](#active-directory)
-    - [Initial Enumeration](#initial-enumeration)
-    - [LLMNR/NTB-NS Poisoning](#llmnr-poisoning)
-    - [Password Spraying & Password Policies](#password-spraying-and-password-policies)
-    - [Enumerating Disabling/Bypassing AV](#enumerating-and-bypassing-av)
-    - [Living Of The Land](#living-of-the-land)
-    - [Kerberoasting](#kerberoasting)
-    - [ACL Enumeration & Tactics](#acl-enumeration-and-tactics)
-    - [DCSync Attack](#dcsync-attack)
-    - [Miscellanous Configurations](#miscellanous-configurations)
-    - [ASREPRoasting](#asreproasting)
-    - [Trust Relationships](#trust-relationships-child-parent-trusts)
-- [Login Brute Forcing](#login-brute-forcing)
-    - [Hydra](#hydra)
-- [SQLMap](#sqlmap)
-- [Useful Resources](#useful-resources)
-
 ## 0. Environment Setup
 - [Tmux](#tmux)
 - Note taking
@@ -169,7 +120,55 @@ If hosts discovered:
 - Provide recommendations for remediation
 - Deliver final penetration test report
 
-
+old list
+**Table of Contents**
+- [Tmux](#tmux)
+- [Nmap](#nmap)
+  - [Address Scanning](#nmap-address-scanning)
+  - [Scanning Techniques](#nmap-scanning-techniques)
+  - [Host Discovery](#nmap-host-discovery)
+  - [Port Scan](#nmap-port-scan)
+  - [OS and Service Detection](#nmap-os-and-service-detection)
+  - [Timing and Performance](#nmap-timing-and-performance)
+  - [NSE Scripts](#nse-scripts)
+  - [Evasion and Spoofing](#firewall-evasion-and-spoofing)
+  - [Output](#output)
+- [Footprinting Services](#footprinting-services)
+    - [FTP](#ftp)
+    - [SMB](#smb)
+    - [NFS](#nfs)
+    - [DNS](#dns)
+    - [IMAP POP3](#imap-pop3)
+    - [SNMP](#snmp)
+    - [MSSQL](#mssql)
+    - [IPMI](#ipmi)
+    - [Remote Management](#linux-remote-management-ssh)
+- [Password Attacks](#password-attacks)
+    - [Password Mutations](#password-mutations)
+    - [Remote Password Attacks](#remote-password-attacks)
+    - [Windows Password Attacks](#windows-password-attacks)
+    - [Linux Password Attacks](#linux-password-attacks)
+    - [Cracking Passwords](#cracking-passwords)
+- [Attacking Common Services](#attacking-common-services)
+    - [Attacking SMB](#attacking-smb)
+    - [Attacking SQL](#attacking-sql)
+    - [Attacking Email Services](#attacking-email-services)
+- [Active Directory](#active-directory)
+    - [Initial Enumeration](#initial-enumeration)
+    - [LLMNR/NTB-NS Poisoning](#llmnr-poisoning)
+    - [Password Spraying & Password Policies](#password-spraying-and-password-policies)
+    - [Enumerating Disabling/Bypassing AV](#enumerating-and-bypassing-av)
+    - [Living Of The Land](#living-of-the-land)
+    - [Kerberoasting](#kerberoasting)
+    - [ACL Enumeration & Tactics](#acl-enumeration-and-tactics)
+    - [DCSync Attack](#dcsync-attack)
+    - [Miscellanous Configurations](#miscellanous-configurations)
+    - [ASREPRoasting](#asreproasting)
+    - [Trust Relationships](#trust-relationships-child-parent-trusts)
+- [Login Brute Forcing](#login-brute-forcing)
+    - [Hydra](#hydra)
+- [SQLMap](#sqlmap)
+- [Useful Resources](#useful-resources)
   
 ## [Tmux](https://tmuxcheatsheet.com/)
 ```
@@ -233,6 +232,9 @@ nmap -sU 192.168.1.1
 
 # TCP ACK port scan
 nmap  -sA 192.168.1.1
+
+# Fin and Xmas
+nmap -sX 192.168.1.1; nmap sF 192.138.1.1
 ```
 #### Nmap Host Discovery
 ```
