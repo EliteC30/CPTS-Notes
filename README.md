@@ -86,8 +86,10 @@ If hosts discovered:
 - If SSH → [Remote Management](#linux-remote-management-ssh)
 
 ### 1.3 Web Enumeration
-- [Attacking Common Services](#attacking-common-services)
-  - [Attacking SQL](#attacking-sql)
+- Whatweb
+- FFUF
+- Gobuster
+- [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 ### 1.4 Credential Attacks
 - [Password Attacks](#password-attacks)
