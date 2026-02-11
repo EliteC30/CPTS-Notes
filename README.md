@@ -3,6 +3,8 @@ HackTheBox Certified Penetration Tester Specialist Cheatsheet
 
 ![Alt text](https://academy.hackthebox.com/storage/exam_overview_banners/Fpoo8YaykR3341XtswrcmuyLNcAK6bZ1WF86Ro6v.png)
 
+The below is taken from https://github.com/zagnox/CPTS-cheatsheet and will be improved by myself
+
 **Table of Contents**
 - [Tmux](#tmux)
 - [Nmap](#nmap)
