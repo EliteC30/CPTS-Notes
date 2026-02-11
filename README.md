@@ -75,15 +75,15 @@ If hosts discovered:
 - [Output](#output)
   
 ### 1.2 Service Enumeration
-If SMB → [SMB Enumeration](#smb)
-If MSSQL → [MSSQL Enumeration](#mssql)
-If DNS → [DNS Enumeration](#dns)
-If SNMP → [SNMP Enumeration](#snmp)
-If FTP → [FTP](#ftp)
-If NFS → [NFS](#nfs)
-If IMAP/POP3 → [IMAP POP3](#imap-pop3)
-If IPMI → [IPMI](#ipmi)
-If SSH → [Remote Management](#linux-remote-management-ssh)
+- If SMB → [SMB Enumeration](#smb)
+- If MSSQL → [MSSQL Enumeration](#mssql)
+- If DNS → [DNS Enumeration](#dns)
+- If SNMP → [SNMP Enumeration](#snmp)
+- If FTP → [FTP](#ftp)
+- If NFS → [NFS](#nfs)
+- If IMAP/POP3 → [IMAP POP3](#imap-pop3)
+- If IPMI → [IPMI](#ipmi)
+- If SSH → [Remote Management](#linux-remote-management-ssh)
 
 ### 1.3 Web Enumeration
 - [Attacking Common Services](#attacking-common-services)
