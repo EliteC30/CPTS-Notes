@@ -54,8 +54,121 @@ The below is taken from https://github.com/zagnox/CPTS-cheatsheet and will be im
 - [SQLMap](#sqlmap)
 - [Useful Resources](#useful-resources)
 
+## 0. Environment Setup
+- [Tmux](#tmux)
+- Note taking
+- Logging
+- Scan output structure
+
+## 1. Initial Access Phase
+### 1.1 Network Discovery
+If scope is unknown:
+- [Address Scanning](#nmap-address-scanning)
+- [Host Discovery](#nmap-host-discovery)
+
+If hosts discovered:
+- [Full Port Scan](#nmap-port-scan)
+- [OS and Service Detection](#nmap-os-and-service-detection)
+- [NSE Scripts](#nse-scripts)
+- [Timing and Performance](#nmap-timing-and-performance)
+- [Evasion and Spoofing](#firewall-evasion-and-spoofing)
+- [Output](#output)
+  
+### 1.2 Service Enumeration
+If SMB → [SMB Enumeration](#smb)
+If MSSQL → [MSSQL Enumeration](#mssql)
+If DNS → [DNS Enumeration](#dns)
+If SNMP → [SNMP Enumeration](#snmp)
+If FTP → [FTP](#ftp)
+If NFS → [NFS](#nfs)
+If IMAP/POP3 → [IMAP POP3](#imap-pop3)
+If IPMI → [IPMI](#ipmi)
+If SSH → [Remote Management](#linux-remote-management-ssh)
+
+### 1.3 Web Enumeration
+- [Attacking Common Services](#attacking-common-services)
+  - [Attacking SQL](#attacking-sql)
+- [SQLMap](#sqlmap)
+### 1.4 Credential Attacks
+- [Password Attacks](#password-attacks)
+  - [Password Mutations](#password-mutations)
+  - [Remote Password Attacks](#remote-password-attacks)
+  - [Windows Password Attacks](#windows-password-attacks)
+  - [Linux Password Attacks](#linux-password-attacks)
+  - [Cracking Passwords](#cracking-passwords)
+- [Login Brute Forcing](#login-brute-forcing)
+    - [Hydra](#hydra)
+
+## 2. Service-Specific Exploitation
+- [Attacking SMB](#attacking-smb)
+- [Attacking SQL](#attacking-sql)
+- [Attacking Email Services](#attacking-email-services)  
+## 3. Active Directory Methodology
+### 3.1 AD Initial Enumeration
+- [Initial Enumeration](#initial-enumeration)
+- [Windows Password Attacks](#windows-password-attacks)
+- [Password Spraying & Password Policies](#password-spraying-and-password-policies)
+- [Trust Relationships](#trust-relationships-child-parent-trusts)
+### 3.2 Credential Attacks in AD
+- [ASREPRoasting](#asreproasting)
+- [Kerberoasting](#kerberoasting)
+- [LLMNR/NTB-NS Poisoning](#llmnr-poisoning)
+- Potato Family
+### 3.3 ACL & Privilege Escalation in AD
+- [ACL Enumeration & Tactics](#acl-enumeration-and-tactics)
+- Group membership abuse
+- Token abuse
+### 3.4 Domain Escalation
+- [DCSync Attack](#dcsync-attack)
+- Delegation abuse
+- Trust abuse
+### 3.5 Trust Exploitation
+- [Miscellanous Configurations](#miscellanous-configurations)
+### 3.6 AV Evasion / Living off the Land
+- [Enumerating Disabling/Bypassing AV](#enumerating-and-bypassing-av)
+- [Living Of The Land](#living-of-the-land)
+
+## 4. Post-Exploitation
+### 4.1 Credential Harvesting
+- [Password Spraying & Password Policies](#password-spraying-and-password-policies)
+- [Windows Password Attacks](#windows-password-attacks)
+- [Linux Password Attacks](#linux-password-attacks)
+### 4.2 Lateral Movement
+- [Footprinting Services](#footprinting-services)
+    - [FTP](#ftp)
+    - [SMB](#smb)
+    - [NFS](#nfs)
+    - [MSSQL](#mssql)
+- [Attacking Common Services](#attacking-common-services)
+    - [Attacking SMB](#attacking-smb)
+    - [Attacking SQL](#attacking-sql)
+    - [Attacking Email Services](#attacking-email-services)
+
+### 4.3 Privilege Escalation (Windows)
+- [Attacking SMB](#attacking-smb)
+- [Attacking SQL](#attacking-sql)
+- [Enumerating Disabling/Bypassing AV](#enumerating-and-bypassing-av)
+- [Living Of The Land](#living-of-the-land)
+
+### 4.4 Privilege Escalation (Linux)
+- [Attacking SMB](#attacking-smb)
+- [Attacking SQL](#attacking-sql)
+- Common Tecniques & Missconfigurations
+## 5. Password Cracking Workflow
+- [Password Mutations](#password-mutations)
+- [Remote Password Attacks](#remote-password-attacks)
+- [Linux Password Attacks](#linux-password-attacks)
+- [Cracking Passwords](#cracking-passwords)
+- [Login Brute Forcing](#login-brute-forcing)
+    - [Hydra](#hydra)
+## 6. Reporting Checklist
+- Clean up artifacts and scripts
+- Document all steps taken
+- Provide recommendations for remediation
+- Deliver final penetration test report
 
 
+  
 ## [Tmux](https://tmuxcheatsheet.com/)
 ```
 # Start a new tmux session
