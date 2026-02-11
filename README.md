@@ -346,6 +346,17 @@ rpcclient -U "" <FQDN IP>
 
 # Enumerating SMB shares using null session authentication.
 crackmapexec smb <FQDN/IP> --shares -u '' -p '' --shares
+
+# Enumerating SMB shares using null session authentication with valid session
+crackmapexec smb INLANEFREIGHT.LOCAL --shares -u 'user' -p 'Welcome1'
+
+#SMBMap
+smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5
+
+smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 -R 'Department Shares' --dir-only
+
+#donwload: smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 --download 'Department Shares/path/to/file'
+
 ```
 ##### NFS
 ```
