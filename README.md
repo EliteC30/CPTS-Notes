@@ -39,7 +39,7 @@ If hosts discovered:
 ### 1.3 Web Enumeration
 - [Whatweb](#WhatWeb)
 - [FUFF](#FUFF-fast-Web-Fuzzer)
-- [Gobuster](#Gobuster-directory-&-dns-brute-force)
+- [Gobuster](#Gobuster-directory-dns-brute-force)
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 ### 1.4 Credential Attacks
@@ -448,7 +448,7 @@ ffuf -u http://target.com/FUZZ -w wordlist.txt -mc 200,302
 # Filter by response size
 ffuf -u http://target.com/FUZZ -w wordlist.txt -fs 4242
 ```
-#### Gobuster (Directory & DNS Brute Force)
+#### Gobuster (Directory DNS Brute Force)
 ```
 # Directory brute force
 gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt
