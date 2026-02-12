@@ -38,8 +38,8 @@ If hosts discovered:
 
 ### 1.3 Web Enumeration
 - [Whatweb](#WhatWeb)
-- [FUFF](#FUFF (Fast Web Fuzzer))
-- [Gobuster](#Gobuster (Directory & DNS Brute Force))
+- [FUFF](#FUFF-fast-Web-Fuzzer)
+- [Gobuster](#gobuster-directory-dns-brute-force)
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 ### 1.4 Credential Attacks
