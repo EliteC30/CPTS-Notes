@@ -38,8 +38,8 @@ If hosts discovered:
 
 ### 1.3 Web Enumeration
 - [Whatweb](#WhatWeb)
-- [FFUF]
-- [Gobuster]
+- [FUFF](#FUFF (Fast Web Fuzzer))
+- [Gobuster](#Gobuster (Directory & DNS Brute Force))
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 ### 1.4 Credential Attacks
@@ -432,7 +432,7 @@ whatweb -a 3 http://target.com
 # Scan multiple hosts
 whatweb -i hosts.txt
 ```
-#### FUFF (Fast Web Fuzzer)
+#### FUFF (Fast Web Fuzzer) 
 ```
 ffuf -u http://target.com/FUZZ -w /usr/share/wordlists/dirb/common.txt
 
