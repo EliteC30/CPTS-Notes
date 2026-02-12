@@ -421,7 +421,7 @@ ssh <user>@<FQDN/IP> -o PreferredAuthentications=password
 ```
 ## Web Enumeration
 
-#### WhatWeb (Technology Fingerprinting)
+#### WhatWeb
 ```
 # Basic scan
 whatweb http://target.com
