@@ -432,7 +432,7 @@ whatweb -a 3 http://target.com
 # Scan multiple hosts
 whatweb -i hosts.txt
 ```
-#### FUFF (Fast Web Fuzzer) 
+#### FUFF (Fast Web Fuzzer)
 ```
 ffuf -u http://target.com/FUZZ -w /usr/share/wordlists/dirb/common.txt
 
