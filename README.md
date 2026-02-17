@@ -192,7 +192,7 @@ tmux a
 tmux a -t <name>
 
 # start/stop logging with tmux logger
-prefix + [Shift + P]
+Control + B then [Shift + P]
 
 # split tmux pane vertically
 prefix + [Shift + %}
@@ -202,6 +202,10 @@ prefix + [Shift + "]
 
 # switch between tmux panes
 prefix + [Shift + O]
+
+#Take screenshot
+[Ctrl] + [B] followed by [Alt] + [P] (prefix + [Alt] + [P])
+
 ```
 
 ## [NMAP](https://www.stationx.net/nmap-cheat-sheet/)
