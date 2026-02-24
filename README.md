@@ -438,19 +438,33 @@ whatweb -i hosts.txt
 ```
 #### FUFF (Fast Web Fuzzer)
 ```
-ffuf -u http://target.com/FUZZ -w /usr/share/wordlists/dirb/common.txt
+ffuf -u http://target.com/FUZZ -w /usr/share/wordlists/dirb/common.txt:FUZZ
 
 # With file extensions
-ffuf -u http://target.com/FUZZ -w wordlist.txt -e .php,.txt,.html
+ffuf -u http://target.com/FUZZ -w wordlist.txt:FUZZ -e .php,.txt,.html
 
 # Virtual host fuzzing
-ffuf -u http://target.com -H "Host: FUZZ.target.com" -w wordlist.txt
+ffuf -u http://target.com -H "Host: FUZZ.target.com" -w wordlist.txt:FUZZ
 
 # Filter by status code
 ffuf -u http://target.com/FUZZ -w wordlist.txt -mc 200,302
 
 # Filter by response size
 ffuf -u http://target.com/FUZZ -w wordlist.txt -fs 4242
+
+#to not print logs and and progress bar use the flags -s and optionally -ic
+
+# Recursion
+ffuf -w wordlist.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v
+
+#Test - subdomain if DNS isn't resolving, and then try vhost with -H and check for size response to filter it. 
+
+# Fuzz for Parameters (Very important)
+ffuf -w burp-parameter-names.txt:FUZZ u http://vhost.academy.htb:PORT/admin/admin.php?FUZZ=key -fs 900
+
+# Parameter Fuzzing POST
+ffuf -w burp-parameter-names.txt:FUZZ u http://vhost.academy.htb:PORT/admin/admin.php -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded' 
+
 ```
 #### Gobuster (Directory DNS Brute Force)
 ```
