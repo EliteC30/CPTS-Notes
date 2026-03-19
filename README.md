@@ -58,9 +58,9 @@ If hosts discovered:
 - [Attacking SMB](#attacking-smb)
 - [Attacking SQL](#attacking-sql)
 - [Attacking Email Services](#attacking-email-services)
-- [File Upload Attacks](file-upload-attacks)
-- [Command Injection Attacks](command-injection-attacks)
-- [Web Attacks](web-attacks)  
+- [File Upload Attacks](#file-upload-attacks)
+- [Command Injection Attacks](#command-injection-attacks)
+- [Web Attacks](#web-attacks)  
 ## 3. Active Directory Methodology
 ### 3.1 AD Initial Enumeration
 - [Initial Enumeration](#initial-enumeration)
