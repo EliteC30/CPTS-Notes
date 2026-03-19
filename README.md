@@ -58,9 +58,9 @@ If hosts discovered:
 - [Attacking SMB](#attacking-smb)
 - [Attacking SQL](#attacking-sql)
 - [Attacking Email Services](#attacking-email-services)
-- [File Uploads Attacks]
-- [Command Injection Attacks]
-- [Web Attacks]  
+- [File Upload Attacks](file-upload-attacks)
+- [Command Injection Attacks](command-injection-attacks)
+- [Web Attacks](web-attacks)  
 ## 3. Active Directory Methodology
 ### 3.1 AD Initial Enumeration
 - [Initial Enumeration](#initial-enumeration)
@@ -125,54 +125,7 @@ If hosts discovered:
 - Provide recommendations for remediation
 - Deliver final penetration test report
 
-old list
-**Table of Contents**
-- [Tmux](#tmux)
-- [Nmap](#nmap)
-  - [Address Scanning](#nmap-address-scanning)
-  - [Scanning Techniques](#nmap-scanning-techniques)
-  - [Host Discovery](#nmap-host-discovery)
-  - [Port Scan](#nmap-port-scan)
-  - [OS and Service Detection](#nmap-os-and-service-detection)
-  - [Timing and Performance](#nmap-timing-and-performance)
-  - [NSE Scripts](#nse-scripts)
-  - [Evasion and Spoofing](#firewall-evasion-and-spoofing)
-  - [Output](#output)
-- [Footprinting Services](#footprinting-services)
-    - [FTP](#ftp)
-    - [SMB](#smb)
-    - [NFS](#nfs)
-    - [DNS](#dns)
-    - [IMAP POP3](#imap-pop3)
-    - [SNMP](#snmp)
-    - [MSSQL](#mssql)
-    - [IPMI](#ipmi)
-    - [Remote Management](#linux-remote-management-ssh)
-- [Password Attacks](#password-attacks)
-    - [Password Mutations](#password-mutations)
-    - [Remote Password Attacks](#remote-password-attacks)
-    - [Windows Password Attacks](#windows-password-attacks)
-    - [Linux Password Attacks](#linux-password-attacks)
-    - [Cracking Passwords](#cracking-passwords)
-- [Attacking Common Services](#attacking-common-services)
-    - [Attacking SMB](#attacking-smb)
-    - [Attacking SQL](#attacking-sql)
-    - [Attacking Email Services](#attacking-email-services)
-- [Active Directory](#active-directory)
-    - [Initial Enumeration](#initial-enumeration)
-    - [LLMNR/NTB-NS Poisoning](#llmnr-poisoning)
-    - [Password Spraying & Password Policies](#password-spraying-and-password-policies)
-    - [Enumerating Disabling/Bypassing AV](#enumerating-and-bypassing-av)
-    - [Living Of The Land](#living-of-the-land)
-    - [Kerberoasting](#kerberoasting)
-    - [ACL Enumeration & Tactics](#acl-enumeration-and-tactics)
-    - [DCSync Attack](#dcsync-attack)
-    - [Miscellanous Configurations](#miscellanous-configurations)
-    - [ASREPRoasting](#asreproasting)
-    - [Trust Relationships](#trust-relationships-child-parent-trusts)
-- [Login Brute Forcing](#login-brute-forcing)
-    - [Hydra](#hydra)
-- [SQLMap](#sqlmap)
+
 - [Useful Resources](#useful-resources)
   
 ## [Tmux](https://tmuxcheatsheet.com/)
@@ -681,6 +634,19 @@ hydra -L users.txt -p 'Company01!' -f 10.10.110.20 pop3
 # Testing the SMTP service for the open-relay vulnerability.
 swaks --from notifications@inlanefreight.com --to employees@inlanefreight.com --header 'Subject: Notification' --body 'Message' --server 10.10.11.213
 ```
+
+##### File Upload Attacks  
+```
+```
+##### Command Injection Attacks
+```
+```
+##### Attacking Web Attacks
+```
+```
+
+
+
 ## Active Directory
 
 #### Initial Enumeration
