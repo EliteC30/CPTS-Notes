@@ -57,7 +57,10 @@ If hosts discovered:
 ## 2. Service-Specific Exploitation
 - [Attacking SMB](#attacking-smb)
 - [Attacking SQL](#attacking-sql)
-- [Attacking Email Services](#attacking-email-services)  
+- [Attacking Email Services](#attacking-email-services)
+- [File Uploads Attacks]
+- [Command Injection Attacks]
+- [Web Attacks]  
 ## 3. Active Directory Methodology
 ### 3.1 AD Initial Enumeration
 - [Initial Enumeration](#initial-enumeration)
