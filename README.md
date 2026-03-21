@@ -7,7 +7,7 @@ The below is taken from https://github.com/zagnox/CPTS-cheatsheet and will be im
 
 ## 0. Environment Setup
 - [Tmux](#tmux)
-- Note taking
+- [Note taking](#note-taking)
 - Logging
 - Scan output structure
 
@@ -127,6 +127,13 @@ If hosts discovered:
 
 
 - [Useful Resources](#useful-resources)
+
+
+
+
+
+
+
   
 ## [Tmux](https://tmuxcheatsheet.com/)
 ```
@@ -163,6 +170,30 @@ prefix + [Shift + O]
 
 #Take screenshot
 [Ctrl] + [B] followed by [Alt] + [P] (prefix + [Alt] + [P])
+
+```
+
+##[note-taking]
+
+```
+External Penetration Test - <Client Name>
+•	Scope (including in-scope IP addresses/ranges, URLs, any fragile hosts, testing timeframes, and any limitations or other relative information we need handy)
+•	Client Points of Contact
+•	Credentials
+•	Discovery/Enumeration
+  o	Scans
+  o	Live hosts
+•	Application Discovery
+  o	Scans
+  o	Interesting/Notable Hosts
+•	Exploitation
+  o	<Hostname or IP>
+  o	<Hostname or IP>
+•	Post-Exploitation
+  o	<Hostname or IP>
+  o	<Hostname or IP>
+
+
 
 ```
 
