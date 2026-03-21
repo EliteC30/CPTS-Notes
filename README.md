@@ -173,7 +173,7 @@ prefix + [Shift + O]
 
 ```
 
-##[note-taking]
+### [note-taking]
 
 ```
 External Penetration Test - <Client Name>
