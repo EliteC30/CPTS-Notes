@@ -173,8 +173,15 @@ prefix + [Shift + O]
 
 ```
 
-## note-taking
+#### note-taking
 
+```
+# Screenshot with eyewitness and output from nmap
+eyewitness --web -x web_discovery.xml -d
+
+```
+
+#### Scan Ouput Structure 
 ```
 External Penetration Test - <Client Name>
 •	Scope (including in-scope IP addresses/ranges, URLs, any fragile hosts, testing timeframes, and any limitations or other relative information we need handy)
