@@ -42,6 +42,8 @@ If hosts discovered:
 - [Gobuster](#Gobuster-directory-dns-brute-force)
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
+- [CMS](#CMS)
+- [Servlet Containers/Sofware Development](#Servlet-Containers/Sofware-Development)
 ### 1.4 Credential Attacks
 - [Password Attacks](#password-attacks)
   - [Password Mutations](#password-mutations)
@@ -477,6 +479,21 @@ gobuster dns -d target.com -w subdomains.txt
 gobuster vhost -u http://target.com -w wordlist.txt
 ```
 
+#### CMS
+
+```
+#WordPress 
+#Joomla
+#Drupal
+
+
+```
+
+#### Servlet Containers/Sofware Development
+
+```
+#apache-tomcat
+```
 
 ## Password Attacks
 
