@@ -43,7 +43,7 @@ If hosts discovered:
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
 - [CMS](#cms)
-- [Servlet Containers/Sofware Development](#servlet-containers-sofware-development)
+- [Apache](#Apache)
 ### 1.4 Credential Attacks
 - [Password Attacks](#password-attacks)
   - [Password Mutations](#password-mutations)
@@ -62,7 +62,9 @@ If hosts discovered:
 - [Attacking Email Services](#attacking-email-services)
 - [File Upload Attacks](#file-upload-attacks)
 - [Command Injection Attacks](#command-injection-attacks)
-- [Web Attacks](#web-attacks)  
+- [Web Attacks](#web-attacks)
+- [Apache Attacks](#apache-attacks)
+  
 ## 3. Active Directory Methodology
 ### 3.1 AD Initial Enumeration
 - [Initial Enumeration](#initial-enumeration)
@@ -489,7 +491,7 @@ gobuster vhost -u http://target.com -w wordlist.txt
 
 ```
 
-#### Servlet Containers/Sofware Development
+#### Apache
 
 ```
 #apache-tomcat
