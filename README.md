@@ -42,8 +42,8 @@ If hosts discovered:
 - [Gobuster](#Gobuster-directory-dns-brute-force)
 - [Attacking SQL](#attacking-sql)
 - [SQLMap](#sqlmap)
-- [CMS](#CMS)
-- [Servlet Containers/Sofware Development](#Servlet-Containers/Sofware-Development)
+- [CMS](#cms)
+- [Servlet Containers/Sofware Development](#servlet-containers-sofware-development)
 ### 1.4 Credential Attacks
 - [Password Attacks](#password-attacks)
   - [Password Mutations](#password-mutations)
