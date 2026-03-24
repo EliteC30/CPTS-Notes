@@ -484,9 +484,32 @@ gobuster vhost -u http://target.com -w wordlist.txt
 #### CMS
 
 ```
-#WordPress 
+#WordPress
+#Version and footprinting
+curl -s http://blog.inlanefreight.local | grep WordPress
+curl -s http://blog.inlanefreight.local/ | grep themes
+curl -s http://blog.inlanefreight.local/ | grep plugins
+curl -s http://blog.inlanefreight.local/?p=1 | grep plugins
+#Enum Users
+/wp-login.php (users)
+sudo wpscan --url http://blog.inlanefreight.local --enumerate --api-token dEOFB<SNIP>
+
 #Joomla
+#Version and footprinting
+curl -s https://developer.joomla.org/stats/cms_version | python3 -m json.tool
+curl -s http://dev.inlanefreight.local/ | grep Joomla
+curl -s http://dev.inlanefreight.local/README.txt | head -n 5
+curl -s http://dev.inlanefreight.local/administrator/manifests/files/joomla.xml | xmllint --format -
+droopescan scan joomla --url http://dev.inlanefreight.local/
+python2.7 joomlascan.py -u http://dev.inlanefreight.local
+sudo python3 joomla-brute.py -u http://dev.inlanefreight.local -w /usr/share/metasploit-framework/data/wordlists/http_default_pass.txt -usr admin
+
 #Drupal
+#Version and footprinting
+curl -s http://drupal.inlanefreight.local | grep Drupal
+curl -s http://drupal-acc.inlanefreight.local/CHANGELOG.txt | grep -m2 ""
+curl -s http://drupal.inlanefreight.local/CHANGELOG.txt
+droopescan scan drupal -u http://drupal.inlanefreight.local
 
 
 ```
