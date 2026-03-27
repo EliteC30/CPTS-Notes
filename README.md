@@ -536,6 +536,9 @@ hashcat --force password.list -r custom.rule --stdout > mut_password.list
 
 ##### Remote Password Attacks
 ```
+# Uses dehashed.py
+sudo python3 dehashed.py -q inlanefreight.local -p
+
 # Uses Hydra in conjunction with a user list and password list to attempt to crack a password over the specified service.
 hydra -L user.list -P password.list <service>://<ip>
 
