@@ -115,7 +115,8 @@ If hosts discovered:
 ### 4.4 Privilege Escalation (Linux)
 - [Attacking SMB](#attacking-smb)
 - [Attacking SQL](#attacking-sql)
-- Common Tecniques & Missconfigurations
+- [Linux-Priv-Esc](#linux-priv-esc)
+  
 ## 5. Password Cracking Workflow
 - [Password Mutations](#password-mutations)
 - [Remote Password Attacks](#remote-password-attacks)
@@ -594,6 +595,15 @@ find /home/* -type f -name "*.txt" -o ! -name "*.*"
 # Uses Linux-based command grep to search the file system for key terms PRIVATE KEY to discover SSH keys.
 grep -rnw "PRIVATE KEY" /* 2>/dev/null | grep ":1"
 ```
+
+##### Linux Priv Esc
+
+```
+#Find Writable Directories
+find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
+```
+
+
 ##### Cracking Passwords
 ```
 # Uses Hashcat to attempt to crack a single NTLM hash and display the results in the terminal output.
