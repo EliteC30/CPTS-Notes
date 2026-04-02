@@ -601,6 +601,47 @@ grep -rnw "PRIVATE KEY" /* 2>/dev/null | grep ":1"
 ```
 #Find Writable Directories
 find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
+
+#what operating system and version we are
+cat /etc/os-release
+
+#Check Current Path, environment variables, printers, cpu, etc.
+echo $PATH; env; uname -a; lscpu; cat /etc/shells; lpstat
+
+#unmounted drives
+cat /etc/fstab
+cat /etc/fstab | grep -v "#" | column -t
+
+#Hiddent files and Directories
+find / -type f -name ".*" -exec ls -l {} \; 2>/dev/null | grep htb-student
+find / -type d -name ".*" -ls 2>/dev/null
+find / -type f \( -name *.conf -o -name *.config \) -exec ls -l {} \; 2>/dev/null
+
+#History Files
+find / -type f \( -name *_hist -o -name *_history \) -exec ls -l {} \; 2>/dev/null
+
+#Routing tables
+netstat -rn
+
+#for acitve directory check /etc/resolv.conf
+
+#list groups
+getent group sudo
+
+#Cron jobs
+ls -la /etc/cron.daily/
+
+#proc
+find /proc -name cmdline -exec cat {} \; 2>/dev/null | tr " " "\n"
+
+#GTFO Bins
+for i in $(curl -s https://gtfobins.org/api.json | jq -r '.executables | keys[]'); do if grep -q "$i" installed_pkgs.list; then echo "Check for GTFO: $i";fi; done
+
+#strace
+strace ping -c1 10.129.112.20
+
+#Scripts
+find / -type f -name "*.sh" 2>/dev/null | grep -v "src\|snap\|share"
 ```
 
 
