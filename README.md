@@ -642,6 +642,10 @@ strace ping -c1 10.129.112.20
 
 #Scripts
 find / -type f -name "*.sh" 2>/dev/null | grep -v "src\|snap\|share"
+
+#Enumerating Capabilities
+find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \;
+
 ```
 
 
