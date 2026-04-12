@@ -533,6 +533,16 @@ hashcat --force password.list -r custom.rule --stdout > mut_password.list
 
 # Users username-anarchy tool in conjunction with a pre-made list of first and last names to generate a list of potential username.
 ./username-anarchy -i /path/to/listoffirstandlastnames.txt
+
+# Search PSReadline history
+foreach($user in ((ls C:\users).fullname)){
+    cat "$user\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadline\ConsoleHost_history.txt" -ErrorAction SilentlyContinue | Select-String "password"
+}
+
+#findstr /SIM /C:"password" *.txt *.ini *.cfg *.config *.xml
+
+# Recursive file search across all user directories and common locations
+Get-ChildItem -Path C:\ -Include *.txt,*.ini,*.cfg,*.config,*.xml -Recurse -ErrorAction SilentlyContinue | Select-String -Pattern "password" -CaseSensitive:$false | Select-Object Path, LineNumber, Line
 ```
 
 ##### Remote Password Attacks
