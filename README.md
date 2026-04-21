@@ -1329,6 +1329,8 @@ kerberos::list /export
 sekurlsa::minidump lsass.dmp
 sekurlsa::logonpasswords
 
+https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/mimikatz-cheatsheet/#summary
+
 # Used to prepare the base64 formatted TGS ticket for cracking from Linux-based host.
 echo "<base64 blob>" | tr -d \\n
 
