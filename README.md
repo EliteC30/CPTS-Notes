@@ -1126,6 +1126,15 @@ bloodhound-python -d DOMAIN.LOCAL -u USER -p 'PASS' -dc DC01 -c All
 # Upload results to BloodHound CE
 # - Produces .json files (zip them if needed) → import via BHCE UI
 
+#If clock skew error appears try this:
+sudo set-ntp off
+rdate -n <dc-ip>
+
+#Another Option is faketime
+sudo ntpdate -q <dc-ip>
+faketime '2026-04-25 19:50:00' bloodhound-python -u henry -p 'pass' -d tombwatcher.htb -dc DC01.tombwatcher.htb -ns <dc-ip> -c All
+
+
 #Makes a zip automatically
 python3 bloodhound.py -d fluffy.htb -u 'user' -p 'pass' -c all --zip -ns 10.10.10.1
 #for tunel or proxychains or ligolo add ip to hosts
