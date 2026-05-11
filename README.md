@@ -514,7 +514,11 @@ ffuf -w wordlist.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-de
 ffuf -w burp-parameter-names.txt:FUZZ u http://vhost.academy.htb:PORT/admin/admin.php?FUZZ=key -fs 900
 
 # Parameter Fuzzing POST
-ffuf -w burp-parameter-names.txt:FUZZ u http://vhost.academy.htb:PORT/admin/admin.php -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded' 
+ffuf -w burp-parameter-names.txt:FUZZ u http://vhost.academy.htb:PORT/admin/admin.php -X POST -d 'FUZZ=key' -H 'Content-Type: application/x-www-form-urlencoded'
+
+FUZZ Parameters seclist/Discovery/Web-Content/burp-parameter-names.txt
+
+FUZZ files /seclist/FUZZING/
 
 ```
 #### Gobuster (Directory DNS Brute Force)
