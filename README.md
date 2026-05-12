@@ -1204,7 +1204,9 @@ nxc ldap 172.16.8.3 -u hporter -p 'Gr8hambino!' --bloodhound --collection All -d
 #check user access against AD
 netexec smb 10.129.232.167 -u alfred -p 'password' -d tombwatcher.htb
 
-
+#netexec smb -u '' -p '' -L to check modules
+# Extracts privileges assigned via GPOs and resolves SIDs via LDAP.
+netexec smb 172.16.8.3 -u <user> -p <Str0ngpass86!> -M gpp_autologin
 ```
 ##### LLMNR Poisoning
 ```
