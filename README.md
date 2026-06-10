@@ -703,6 +703,12 @@ find / -path /proc -prune -o -type d -perm -o+w 2>/dev/null
 #Writable Files, Find world-writable files
 find / -path /proc -prune -o -type f -perm -o+w 2>/dev/null
 
+Owned by root but whose group is user
+find / -type f -user root -group $(whoami) 2>/dev/null
+
+SUID bit set 
+find / -type f -perm -4000 2>/dev/null
+
 #Mounted Drives, Check fstab and mounts
 cat /etc/fstab
 cat /etc/fstab | grep -v "#" | column -t
