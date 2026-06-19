@@ -1274,7 +1274,10 @@ rpcclient -U "" -N 172.16.5.5
 rpcclient $> querydominfo
 
 # Uses ldapsearch to enumerate the password policy in a target Windows domain from a Linux-based host.
-ldapsearch -h 172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+
+ldapsearch -H ldap://172.16.5.5 -x -b "DC=INLANEFREIGHT,DC=LOCAL" -s sub "*" | grep -m 1 -B 10 pwdHistoryLength
+
+dapsearch -H ldap://10.0.3.3 -x -b "DC=coffee,DC=local" | grep -i description
 
 #Enum4linux Password Policy
 enum4linux -P 172.16.5.5 (DC)
